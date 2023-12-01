@@ -1,0 +1,18 @@
+class Buildings:
+    def __init__(self,id,verticies):
+        self.id = id
+        self.verticies = verticies
+
+class Vehicules:
+    def __init__(self, posit, target, orient):
+        self.id = id
+        self.posit = posit
+        self.target = target
+        self.orient = orient
+    
+
+
+
+class modele:
+    def __init__(self,Lbuildings,Lvehicules):
+        pass
