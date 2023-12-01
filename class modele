@@ -17,4 +17,3 @@ class modele:
     def __init__(self,Lbuildings,Lvehicules):
         pass
 
-test de modification youenn
