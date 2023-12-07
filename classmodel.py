@@ -1,13 +1,13 @@
 class Building:
     def __init__(self,name,verticies):
-        self.id = name
+        self.name = name
         self.verticies = verticies
 
 
 
 class Vehicule:
     def __init__(self, name, posit, target, orient):
-        self.id = name
+        self.name = name
         self.posit = posit
         self.target = target
         self.orient = orient
