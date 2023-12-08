@@ -22,5 +22,5 @@ class Modele:
     def add_building(self,build):
         self.buildings.append(build)
 
-    def add_vehicule(self,drone):
+    def add_drone(self,drone):
         self.drones.append(drone)
