@@ -32,16 +32,17 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.setBrush(QBrush(Qt.cyan))
         self.setPen(QPen(Qt.blue))
     
+        def update_position(self):
+            self.setRotation(self.drone.orient)
+            self.setPos(self.drone.position())
 
-
-        def mouseMoveEvent(evt):
+        def mouseMoveEvent(self,evt):
             #quand on bouge alors on change la position du drone
             self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+            print (evt.scenePos().x())
             self.update_position()
         
-        def update_position(self):
-             self.setRotation(self.drone.orient)
-             self.setPos(self.drone.position())
+       
 
 
 
