@@ -7,14 +7,11 @@ import classmodel as cm
 v1 = cm.Drone('v1',[20,20,20],[300,300,20],0)
 ang_drone=0
 
+
 class MaSceneGraphique(QGraphicsScene):
     def __init__(self, parent=None):
         super(MaSceneGraphique, self).__init__(parent)
 
-    def mouseMoveEvent(self, event):
-        for item in self.items():
-            if isinstance(item, VehiculeItem):
-                item.mouseMoveEvent(event)
 
 class VehiculeItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
@@ -37,7 +34,6 @@ class VehiculeItem(QGraphicsPolygonItem):
         def mouseMoveEvent(evt):
             #quand on bouge alors on change la position du drone
             self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
-           
             self.update_position()
         
         def update_position(self):
