@@ -12,6 +12,33 @@ class MaSceneGraphique(QGraphicsScene):
         super(MaSceneGraphique, self).__init__(parent)
 
 
+
+class vehicleItem(QGraphicsPolygonItem):
+    def __init__(self,vehicle):
+
+        self.drone = vehicle
+        self.polygone = QPolygonF(QPointF(vehicle.posit[0],vehicle.posit[1]), QPointF(vehicle.posit[0] - 1,vehicle.posit[1] - 1), QPointF(vehicle.posit[0] - 1,vehicle.posit[1] + 1))
+        super(QGraphicsPolygonItem,self).__init__(self.polygone)
+        self.setRotation(self.drone.orientation[1])
+
+        self.setBrush(QBrush(Qt.cyan))
+        self.setPen(QPen(Qt.black))
+
+        def mouseMoveEvent(evt):
+            #quand on bouge alors on change la position du drone
+            self.drone.set_position(evt.posInScene().x(), evt.posInScene().y())
+            self.update_position()
+        
+        def update_position(self):
+             self.setRotation(self.drone.orientation[1])
+             self.setPos(self.drone.position())
+
+
+
+
+
+
+
 class Q_graphical_item(cm.Vehicule,cm.Building):
 
     def __init__(self,Lbuild,Lvehic):
@@ -42,28 +69,32 @@ class Q_graphical_item(cm.Vehicule,cm.Building):
 
 
 
-class MaFenetrePrincipale(QMainWindow,Q_graphical_item):
+class MaFenetrePrincipale(QMainWindow):
     def __init__(self):
-        super(MaFenetrePrincipale, self).__init__() # arg de Q_graphical_items
+        super(QMainWindow, self).__init__()
         
-        self.initUI()
-
-
-    def initUI(self):
-        # Créer une instance de MaSceneGraphique
         self.scene = MaSceneGraphique(self)
-
-        # Créer une vue pour la scène graphique
         self.vue = QGraphicsView(self.scene)
         self.setCentralWidget(self.vue)
-
-        # Créer la barre d'outils
-        #self.creerBarreOutils()
-        
-        self.ajouterTriangle()
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
         self.show()
+
+        self.model = cm.Modele()
+
+        bouton_ajouter_drone = QPushButton()
+        bouton_ajouter_drone.clicked.connect(self.ajoute_drone)
+
+    def ajoute_drone(self):
+        #creer un drone
+        drone = cm.Vehicule("AC1", [0,0,0], [0,0,0])
+        self.model.add_vehicule(drone)
+
+        #object graohique qui represente le véhicule
+        droneItem = vehicleItem(drone)
+        self.scene.addItem(droneItem)
+    
+       
 
 
 
