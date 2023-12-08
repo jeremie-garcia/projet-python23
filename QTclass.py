@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView, QMainWindow, QToolBar, QAction, QGraphicsRectItem, QGraphicsPolygonItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen, QIcon
 from PyQt5.QtCore import Qt, QPointF
-import classmodel as cm
+import Classmodele as cm
 
 v1 = cm.Vehicule('v1',[20,20,20],[300,300,20],0)
 
