@@ -4,3 +4,7 @@ self.polygone = QPolygonF([
     QPointF(vehicule.posit[0] - 1, vehicule.posit[1] + 1),
     QPointF(vehicule.posit[0], vehicule.posit[1] + 1)
 ])
+    def mouseMoveEvent(self, event):
+        for item in self.items():
+            if isinstance(item, VehiculeItem):
+                item.mouseMoveEvent(event)
