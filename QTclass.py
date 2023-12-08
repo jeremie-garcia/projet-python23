@@ -14,9 +14,9 @@ class MaSceneGraphique(QGraphicsScene):
 
 
 class vehicleItem(QGraphicsPolygonItem):
-    def __init__(self,vehicle):
+    def __init__(self,drone):
 
-        self.drone = vehicle
+        self.drone = drone
         self.polygone = QPolygonF(QPointF(vehicle.posit[0],vehicle.posit[1]), QPointF(vehicle.posit[0] - 1,vehicle.posit[1] - 1), QPointF(vehicle.posit[0] - 1,vehicle.posit[1] + 1))
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
         self.setRotation(self.drone.orientation[1])
