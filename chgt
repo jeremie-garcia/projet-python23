@@ -4,7 +4,15 @@ self.polygone = QPolygonF([
     QPointF(vehicule.posit[0] - 1, vehicule.posit[1] + 1),
     QPointF(vehicule.posit[0], vehicule.posit[1] + 1)
 ])
-    def mouseMoveEvent(self, event):
-        for item in self.items():
-            if isinstance(item, VehiculeItem):
-                item.mouseMoveEvent(event)
+
+
+
+  self.mousePressEvent = self.on_mouse_press
+ def on_mouse_press(self, event: QGraphicsSceneMouseEvent):
+        # Quand on clique, on change la position du drone
+        self.drone.set_position(event.scenePos().x(), event.scenePos().y())
+        self.update_position()
+
+    def update_position(self):
+        self.setRotation(self.drone.orient)
+        self.setPos(self.drone.position())
