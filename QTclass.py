@@ -37,6 +37,7 @@ class VehiculeItem(QGraphicsPolygonItem):
         def mouseMoveEvent(evt):
             #quand on bouge alors on change la position du drone
             self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+           
             self.update_position()
         
         def update_position(self):
