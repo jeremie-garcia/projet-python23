@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView, QMainWindow, QPushButton, QToolBar, QAction, QGraphicsRectItem, QGraphicsPolygonItem
+import typing
+from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QAction, QGraphicsRectItem, QGraphicsPolygonItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen, QIcon, QPolygon
 from PyQt5.QtCore import Qt, QPointF, QPoint
 import classmodel as cm
@@ -29,16 +30,18 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.setBrush(QBrush(Qt.cyan))
         self.setPen(QPen(Qt.blue))
     
-
-
-        def mouseMoveEvent(evt):
-            #quand on bouge alors on change la position du drone
-            self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
-            self.update_position()
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+        print("press", event)
+    
+    def mouseMoveEvent(self, event):
+        #quand on bouge alors on change la position du drone
+        print("move",event.scenePos())
+        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+        self.update_position()
         
-        def update_position(self):
-             self.setRotation(self.drone.orient)
-             self.setPos(self.drone.position())
+    def update_position(self):
+        self.setRotation(self.drone.orient)
+        #self.setPos(self.drone.position())
 
 
 
