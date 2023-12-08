@@ -32,17 +32,16 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.setBrush(QBrush(Qt.cyan))
         self.setPen(QPen(Qt.blue))
     
-        def update_position(self):
-            self.setRotation(self.drone.orient)
-            self.setPos(self.drone.position())
 
-        def mouseMoveEvent(self,evt):
+
+        def mouseMoveEvent(evt):
             #quand on bouge alors on change la position du drone
             self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
-            print (evt.scenePos().x())
             self.update_position()
         
-       
+        def update_position(self):
+             self.setRotation(self.drone.orient)
+             self.setPos(self.drone.position())
 
 
 
@@ -98,7 +97,6 @@ class MaFenetrePrincipale(QMainWindow):
         drone = cm.Drone("AC1", [0,0,0], [0,0,0], ang_drone)
         self.model.add_drone(drone)
 
-        #object graohique qui represente le véhicule
         droneItem = VehiculeItem(drone)
         self.scene.addItem(droneItem)
 
