@@ -5,7 +5,7 @@ class Building:
 
 
 
-class Vehicule:
+class Drone:
     def __init__(self, name, posit, target, orient):
         self.name = name
         self.posit = posit
@@ -17,10 +17,10 @@ class Vehicule:
 class Modele:
     def __init__(self):
         self.builings=[]
-        self.vehicules=[]
+        self.drones=[]
 
     def add_building(self,build):
         self.buildings.append(build)
 
-    def add_vehicule(self,vehic):
-        self.vehicules.append(vehic)
+    def add_vehicule(self,drone):
+        self.drones.append(drone)
