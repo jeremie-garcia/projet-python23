@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView, QMainWindow, QPushButton, QToolBar, QAction, QGraphicsRectItem, QGraphicsPolygonItem
-from PyQt5.QtGui import QPolygonF, QBrush, QPen, QIcon
-from PyQt5.QtCore import Qt, QPointF
+from PyQt5.QtGui import QPolygonF, QBrush, QPen, QIcon, QPolygon
+from PyQt5.QtCore import Qt, QPointF, QPoint
 import classmodel as cm
 
 v1 = cm.Drone('v1',[20,20,20],[300,300,20],0)
@@ -13,11 +13,11 @@ class MaSceneGraphique(QGraphicsScene):
 
 
 
-class vehicleItem(QGraphicsPolygonItem):
+class VehiculeItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.polygone = QPolygonF(QPointF(vehicule.posit[0],vehicule.posit[1]), QPointF(vehicule.posit[0] - 1,vehicule.posit[1] - 1), QPointF(vehicule.posit[0] - 1,vehicule.posit[1] + 1))
+        self.polygone = QPolygon(QPoint(vehicule.posit[0],vehicule.posit[1]), QPoint(vehicule.posit[0] - 1, vehicule.posit[1] - 1), QPoint(vehicule.posit[0] - 1, vehicule.posit[1] + 1))
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
         self.setRotation(self.drone.orientation[1])
 
@@ -82,6 +82,7 @@ class MaFenetrePrincipale(QMainWindow):
 
         bouton_ajouter_drone = QPushButton("Ajouter un drone")
         bouton_ajouter_drone.clicked.connect(self.ajoute_drone)
+        self.scene.addWidget(bouton_ajouter_drone)
 
     def ajoute_drone(self):
         #creer un drone
@@ -89,12 +90,13 @@ class MaFenetrePrincipale(QMainWindow):
         self.model.add_drone(drone)
 
         #object graohique qui represente le véhicule
-        droneItem = vehicleItem(drone)
+        droneItem = VehiculeItem(drone)
         self.scene.addItem(droneItem)
 
 
 def main():
     app = QApplication(sys.argv)
+    print("c tout bon")
     fenetre = MaFenetrePrincipale()
     sys.exit(app.exec_())
 
