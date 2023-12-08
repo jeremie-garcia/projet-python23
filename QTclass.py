@@ -16,8 +16,8 @@ class Q_graphical_item(cm.Vehicule,cm.Building):
 
     def __init__(self,Lbuild,Lvehic):
 
-        self.Lbuild = self.Lbuild
-        self.Lvehic = self.Lvehic
+        self.Lbuild = Lbuild
+        self.Lvehic = Lvehic
 
   
     def dessinerCarre(self):
