@@ -11,7 +11,10 @@ class MaSceneGraphique(QGraphicsScene):
     def __init__(self, parent=None):
         super(MaSceneGraphique, self).__init__(parent)
 
-
+    def mouseMoveEvent(self, event):
+        for item in self.items():
+            if isinstance(item, VehiculeItem):
+                item.mouseMoveEvent(event)
 
 class VehiculeItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
@@ -19,27 +22,26 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.drone = vehicule
         self.polygone = self.polygone = QPolygonF([
                         QPointF(vehicule.posit[0], vehicule.posit[1]),
-                        QPointF(vehicule.posit[0] - 1, vehicule.posit[1] - 1),
-                        QPointF(vehicule.posit[0], vehicule.posit[1] + 1)
+                        QPointF(vehicule.posit[0] - 25, vehicule.posit[1] - 100),
+                        QPointF(vehicule.posit[0] - 50, vehicule.posit[1])
                     ])
         
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
         
         self.setRotation(self.drone.orient)
         self.setBrush(QBrush(Qt.cyan))
-        self.setPen(QPen(Qt.black))
+        self.setPen(QPen(Qt.blue))
+    
 
 
         def mouseMoveEvent(evt):
             #quand on bouge alors on change la position du drone
-            self.drone.set_position(evt.posInScene().x(), evt.posInScene().y())
+            self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
             self.update_position()
         
         def update_position(self):
-             self.setRotation(self.drone.orientation[1])
+             self.setRotation(self.drone.orient)
              self.setPos(self.drone.position())
-
-
 
 
 
