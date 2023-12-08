@@ -63,7 +63,7 @@ class Q_graphical_item(cm.Drone,cm.Building):
         
 
         # Définir l'angle de rotation pour le triangle (en degrés)
-        triangle_item.setRotation(ang_tri) # Vous pouvez ajuster l'angle selon vos besoins
+        triangle_item.setRotation(ang_drone) # Vous pouvez ajuster l'angle selon vos besoins
 
 
 
