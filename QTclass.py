@@ -20,7 +20,6 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.polygone = self.polygone = QPolygonF([
                         QPointF(vehicule.posit[0], vehicule.posit[1]),
                         QPointF(vehicule.posit[0] - 1, vehicule.posit[1] - 1),
-                        QPointF(vehicule.posit[0] - 1, vehicule.posit[1] + 1),
                         QPointF(vehicule.posit[0], vehicule.posit[1] + 1)
                     ])
         
