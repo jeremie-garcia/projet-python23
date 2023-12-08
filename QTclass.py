@@ -14,10 +14,10 @@ class MaSceneGraphique(QGraphicsScene):
 
 
 class vehicleItem(QGraphicsPolygonItem):
-    def __init__(self,drone):
+    def __init__(self,vehicule):
 
-        self.drone = drone
-        self.polygone = QPolygonF(QPointF(vehicle.posit[0],vehicle.posit[1]), QPointF(vehicle.posit[0] - 1,vehicle.posit[1] - 1), QPointF(vehicle.posit[0] - 1,vehicle.posit[1] + 1))
+        self.drone = vehicule
+        self.polygone = QPolygonF(QPointF(vehicule.posit[0],vehicule.posit[1]), QPointF(vehicule.posit[0] - 1,vehicule.posit[1] - 1), QPointF(vehicule.posit[0] - 1,vehicule.posit[1] + 1))
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
         self.setRotation(self.drone.orientation[1])
 
@@ -85,7 +85,7 @@ class MaFenetrePrincipale(QMainWindow):
 
     def ajoute_drone(self):
         #creer un drone
-        drone = cm.Vehicule("AC1", [0,0,0], [0,0,0], ang_drone)
+        drone = cm.Drone("AC1", [0,0,0], [0,0,0], ang_drone)
         self.model.add_drone(drone)
 
         #object graohique qui represente le véhicule
