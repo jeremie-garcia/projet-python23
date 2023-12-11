@@ -90,6 +90,8 @@ class MaFenetrePrincipale(QMainWindow):
         bouton_ajouter_un_drone=QPushButton("Ajouter un drone")
         toolbar.addWidget(bouton_ajouter_un_drone)
         bouton_ajouter_un_drone.clicked.connect(self.ajoute_drone)
+        bouton_ajouter_un_obstacle=QPushButton("Ajouter un obstacle")
+        toolbar.addWidget(bouton_ajouter_un_obstacle)
         self.show()
         self.model = cm.Modele()
 
