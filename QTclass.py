@@ -84,13 +84,16 @@ class MaFenetrePrincipale(QMainWindow):
         self.setCentralWidget(self.vue)
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
+        toolbar=QToolBar("Paramètres")
+        self.addToolBar(Qt.LeftToolBarArea,toolbar)
+        toolbar.setMovable(False)
+        bouton_ajouter_un_drone=QPushButton("Ajouter un drone")
+        toolbar.addWidget(bouton_ajouter_un_drone)
+        bouton_ajouter_un_drone.clicked.connect(self.ajoute_drone)
         self.show()
-
         self.model = cm.Modele()
 
-        bouton_ajouter_drone = QPushButton("Ajouter un drone")
-        bouton_ajouter_drone.clicked.connect(self.ajoute_drone)
-        self.scene.addWidget(bouton_ajouter_drone)
+
 
     def ajoute_drone(self):
         #creer un drone
