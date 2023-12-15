@@ -26,7 +26,7 @@ class Modele:
         self.drones.append(drone) #ajout de drone
     def json(self): 
         buildings_json = [{'name': Building.name, 'verticies': Building.verticies} for Building in self.buildings]
-        drones_json = [{'name': Drone.name, 'posit': Drone.posit, ' target': Drone.target, 'source_strength': Drone.source_strength, 'imag_source_strength' : Drone.imag_source_strength, 'sink_strength': Drone.sink_strength, 'safety': Drone.safety} for Drone in self.drones]
+        drones_json = [{'name': Drone.name, 'posit': Drone.posit, ' target': Drone.target, 'orientation' : Drone.orient, 'source_strength': Drone.source_strength, 'imag_source_strength' : Drone.imag_source_strength, 'sink_strength': Drone.sink_strength, 'safety': Drone.safety} for Drone in self.drones]
         return {'buildings': buildings_json, 'drones': drones_json}
     
     def save_to_file(liste_modele, fichier):
