@@ -18,13 +18,22 @@ class VehiculeItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.polygone = self.polygone = QPolygonF([
-                        QPointF(vehicule.posit[0], vehicule.posit[1]),
-                        QPointF(vehicule.posit[0] - 25, vehicule.posit[1] - 100),
-                        QPointF(vehicule.posit[0] - 50, vehicule.posit[1])
+        self.x1= vehicule.posit[0]
+        self.y1= vehicule.posit[1]
+        self.x2= vehicule.posit[0] - 25
+        self.y2= vehicule.posit[1] - 100
+        self.x3=vehicule.posit[0] - 50
+        self.y3=vehicule.posit[1]
+        self.polygone = QPolygonF([
+                        QPointF(self.x1, self.y1),
+                        QPointF(self.x2, self.y2 ),
+                        QPointF(self.x3, self.y3)
                     ])
         
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
+
+        self.newx=0
+        self.newy=0
         
         self.setRotation(self.drone.orient)
         self.setBrush(QBrush(Qt.cyan))
@@ -36,13 +45,16 @@ class VehiculeItem(QGraphicsPolygonItem):
     def mouseMoveEvent(self, event):
         #quand on bouge alors on change la position du drone
         print("move",event.scenePos())
+        self.newx=event.scenePos().x()
+        self.newy=event.scenePos().y()
         #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
         self.update_position()
         
     def update_position(self):
         self.setRotation(self.drone.orient)
-        #self.setPos(self.drone.position())
-
+        self.x1=self.newx
+        self.y1=self.newy
+        print(self.x1)
 
 
 # class Q_graphical_item(cm.Drone,cm.Building):
