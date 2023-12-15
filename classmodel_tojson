@@ -5,7 +5,7 @@ class Building:
         self.verticies = verticies #liste de liste de points réels x : position horizontal (0-5m),y: position vertical(0-5m),z  :altitude (0-10m)
 
 class Drone:
-    def __init__(self, name, posit, goal, source_strength, imag_source_strength, sink_strength, safety):
+    def __init__(self, name, posit, goal, orient,source_strength, imag_source_strength, sink_strength, safety):
         self.name = name #chaine de caractère
         self.posit = posit #liste de 3 points x,y,z
         self.goal = goal #liste de 3 points x,y,z
