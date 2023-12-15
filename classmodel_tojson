@@ -1,6 +1,6 @@
 import json
 class Building:
-    def __init__(self,name,verticies):
+    def __init__(self,name,verticies): # liste des positions des points (x,y,z))
         self.name = name #chaine de caractère
         self.verticies = verticies #liste de liste de points réels x : position horizontal (0-5m),y: position vertical(0-5m),z  :altitude (0-10m)
 
