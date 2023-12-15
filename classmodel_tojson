@@ -1,0 +1,41 @@
+import json
+class Building:
+    def __init__(self,name,verticies):
+        self.name = name
+        self.verticies = verticies
+
+class Drone:
+    def __init__(self, name, posit, target, orient):
+        self.name = name
+        self.posit = posit
+        self.target = target
+        self.orient = orient
+
+class Modele:
+    def __init__(self):
+        self.buildings=[]
+        self.drones=[]
+
+    def add_building(self,build):
+        self.buildings.append(build)
+
+    def add_drone(self,drone):
+        self.drones.append(drone)
+    def json(self):
+        buildings_json = [{'name': Building.name, 'verticies': Building.verticies} for Building in self.buildings]
+        drones_json = [{'name': Drone.name, 'posit': Drone.posit, 'target': Drone.target, 'orient': Drone.orient} for Drone in self.drones]
+        return {'buildings': buildings_json, 'drones': drones_json}
+    
+    def save_to_file(liste_modele, fichier):
+        data_to_save = [Modele.json() for Modele in liste_modele]
+        with open(fichier, 'w') as file:
+            json.dump(data_to_save, file, indent=2)
+        
+# Exemple :
+ex= Modele()
+ex2=Modele()
+ex.add_building(Building('Building1', [1, 2, 3]))
+ex2.add_building(Building('Building2', [0, 3, 7]))
+ex.add_drone(Drone('Drone1', [0, 0, 0], [1, 1, 1], 'N'))
+ex2.add_drone(Drone('Drone2', [0, 0, 0], [1, 1, 1], 'S'))
+Modele.save_to_file([ex, ex2], 'data.json')
