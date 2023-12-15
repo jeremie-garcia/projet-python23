@@ -1,21 +1,52 @@
 import sys
-import typing
-from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QAction, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar
-from PyQt5.QtGui import QPolygonF, QBrush, QPen, QIcon, QPolygon
-from PyQt5.QtCore import Qt, QPointF, QPoint
-import tojason as cm
+from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
+from PyQt5.QtGui import QPolygonF, QBrush, QPen
+from PyQt5.QtCore import Qt, QPointF,QRectF
 import tojason
 
 v1 = tojason.Drone('v1',[20,20,20],[300,300,20],0)
 Modele=tojason.Modele()
 ang_drone=0
 
+
+class GridItem(QGraphicsItem):
+    def __init__(self, rect, horizontalSpacing, verticalSpacing):
+        super(GridItem, self).__init__()
+
+        self.rect = rect
+        self.horizontalSpacing = horizontalSpacing
+        self.verticalSpacing = verticalSpacing
+
+    def paint(self, painter, option, widget): #option, widget il faut les laisser
+        pen = QPen()
+        pen.setColor(Qt.lightGray)
+        pen.setStyle(Qt.DashLine)
+        painter.setPen(pen)
+
+        # lignes horizontales
+        current_y = int(self.rect.top())
+        while current_y <= int(self.rect.bottom()):
+            painter.drawLine(int(self.rect.left()), current_y, int(self.rect.right()), current_y)
+            current_y += self.verticalSpacing
+
+        # lignes verticales
+        current_x = int(self.rect.left())
+        while current_x <= int(self.rect.right()):
+            painter.drawLine(current_x, int(self.rect.top()), current_x, int(self.rect.bottom()))
+            current_x += self.horizontalSpacing
+
+    def boundingRect(self):
+        return QRectF(self.rect)
+
 class MaSceneGraphique(QGraphicsScene):
     def __init__(self, parent=None):
         super(MaSceneGraphique, self).__init__(parent)
 
-        self.addItem(QGraphicsRectItem(-50,-50, 100, 100))
+        rect_item = QGraphicsRectItem(-500, -500, 1000, 1000)
+        self.addItem(rect_item)
 
+        grid_item = GridItem(rect_item.boundingRect(), 50, 50)  # Ajustez les valeurs selon vos besoins
+        self.addItem(grid_item)
 
 
 
@@ -70,9 +101,9 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.drone = vehicule
         self.x1= vehicule.posit[0]
         self.y1= vehicule.posit[1]
-        self.x2= vehicule.posit[0] - 2.5
-        self.y2= vehicule.posit[1] - 10
-        self.x3= vehicule.posit[0] - 5
+        self.x2= vehicule.posit[0] - 25
+        self.y2= vehicule.posit[1] - 50
+        self.x3= vehicule.posit[0] - 50
         self.y3=vehicule.posit[1]
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
@@ -91,7 +122,7 @@ class VehiculeItem(QGraphicsPolygonItem):
 
         Modele.add_drone(self.drone)
 
-
+        
     
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         print("press", event)
@@ -150,7 +181,7 @@ class MaFenetrePrincipale(QMainWindow):
 
     def ajoute_drone(self):
         #creer un drone
-        drone = cm.Drone("AC1", [0,0,0,],[0,0,0], ang_drone)
+        drone = tojason.Drone("AC1", [0,0,0,],[0,0,0], ang_drone)
         self.model.add_drone(drone)
 
         droneItem = VehiculeItem(drone)
@@ -158,8 +189,8 @@ class MaFenetrePrincipale(QMainWindow):
 
     
     def ajoute_building(self):
-        verticies=[[0,0,1],[0,10,1],[10,10,1],[10,0,1]]
-        building = cm.Building("OBS1",verticies)
+        verticies=[[0,0,1],[0,40,1],[40,40,1],[40,0,1]]
+        building = tojason.Building("OBS1",verticies)
         self.model.add_building(building)
 
         buildingItem = ObstacleItem(building)
