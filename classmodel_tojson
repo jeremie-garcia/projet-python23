@@ -9,6 +9,7 @@ class Drone:
         self.name = name #chaine de caractère
         self.posit = posit #liste de 3 points x,y,z
         self.goal = goal #liste de 3 points x,y,z
+        self.orient = orient
         self.source_strength = source_strength #valeur fixe :0.5
         self.imag_source_strength = imag_source_strength #valeur fixe : 0.5
         self.sink_strength=sink_strength #valeur fixe : 5
