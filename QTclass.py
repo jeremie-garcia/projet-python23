@@ -8,6 +8,9 @@ v1 = tojason.Drone('v1',[20,20,20],[300,300,20],0)
 Modele=tojason.Modele()
 ang_drone=0
 
+#####################################################
+####  TOULES LES DIMENSIONS SONT EN CENTIMETRES  ####
+#####################################################
 
 class GridItem(QGraphicsItem):
     def __init__(self, rect, horizontalSpacing, verticalSpacing):
@@ -19,8 +22,8 @@ class GridItem(QGraphicsItem):
 
     def paint(self, painter, option, widget): #option, widget il faut les laisser
         pen = QPen()
-        pen.setColor(Qt.lightGray)
-        pen.setStyle(Qt.DashLine)
+        pen.setColor(Qt.lightGray) # couleur de la grille
+        pen.setStyle(Qt.DashLine) # style de la grille
         painter.setPen(pen)
 
         # lignes horizontales
@@ -42,7 +45,7 @@ class MaSceneGraphique(QGraphicsScene):
     def __init__(self, parent=None):
         super(MaSceneGraphique, self).__init__(parent)
 
-        rect_item = QGraphicsRectItem(-500, -500, 1000, 1000)
+        rect_item = QGraphicsRectItem(-500, -500, 1000, 1000) # en cm
         self.addItem(rect_item)
 
         grid_item = GridItem(rect_item.boundingRect(), 50, 50)  # Ajustez les valeurs entres les lignes
