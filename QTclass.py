@@ -7,7 +7,10 @@ import tojason
 v1 = tojason.Drone('v1',[20,20,20],[300,300,20],0)
 Modele=tojason.Modele()
 ang_drone=0
-
+source_strength=0.5
+imag_source_strength=0.5
+sink_strength=5
+safety=0.0001
 #####################################################
 ####  TOULES LES DIMENSIONS SONT EN CENTIMETRES  ####
 #####################################################
