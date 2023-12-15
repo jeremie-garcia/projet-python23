@@ -45,7 +45,7 @@ class MaSceneGraphique(QGraphicsScene):
         rect_item = QGraphicsRectItem(-500, -500, 1000, 1000)
         self.addItem(rect_item)
 
-        grid_item = GridItem(rect_item.boundingRect(), 50, 50)  # Ajustez les valeurs selon vos besoins
+        grid_item = GridItem(rect_item.boundingRect(), 50, 50)  # Ajustez les valeurs entres les lignes
         self.addItem(grid_item)
 
 
