@@ -74,8 +74,8 @@ class ObstacleItem(QGraphicsPolygonItem):
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
         
         #self.setRotation(self.drone.orient)
-        self.setBrush(QBrush(Qt.cyan))
-        self.setPen(QPen(Qt.cyan))
+        self.setBrush(QBrush(Qt.red))
+        self.setPen(QPen(Qt.red))
         Modele.add_building(self.building)
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
@@ -95,8 +95,6 @@ class ObstacleItem(QGraphicsPolygonItem):
         self.building.verticies[1]=self.newy
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
-        print(self.newx)
-        print(self.newy)
         print(self.building.verticies)
 
 
@@ -126,8 +124,8 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.newy=0
         
         self.setRotation(self.drone.orient)
-        self.setBrush(QBrush(Qt.green))
-        self.setPen(QPen(Qt.green))
+        self.setBrush(QBrush(Qt.cyan))
+        self.setPen(QPen(Qt.cyan))
 
     
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
@@ -147,8 +145,6 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.drone.target[1]=self.newy
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
-        print(self.newx)
-        print(self.newy)
         print(self.drone.target)
 
     
@@ -177,8 +173,8 @@ class TargetItem(QGraphicsPolygonItem):
         self.newy=0
         
         self.setRotation(self.drone.orient)
-        self.setBrush(QBrush(Qt.red))
-        self.setPen(QPen(Qt.red))
+        self.setBrush(QBrush(Qt.green))
+        self.setPen(QPen(Qt.green))
 
         
     
@@ -199,8 +195,6 @@ class TargetItem(QGraphicsPolygonItem):
         self.drone.posit[1]=self.newy
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
-        print(self.newx)
-        print(self.newy)
         print(self.drone.posit)
 
 
@@ -236,7 +230,7 @@ class MaFenetrePrincipale(QMainWindow):
 
     def ajoute_drone(self):
         #creer un drone
-        drone = tojason.Drone("AC1", [0,0,0,],[5,5,0], ang_drone, source_strength, imag_source_strength, sink_strength, safety)
+        drone = tojason.Drone("AC1", [0,0,0,],[100,-300,0], ang_drone, source_strength, imag_source_strength, sink_strength, safety)
         self.model.add_drone(drone)
 
         droneItem = VehiculeItem(drone)
@@ -254,7 +248,6 @@ class MaFenetrePrincipale(QMainWindow):
         self.scene.addItem(buildingItem)
 
      
-        
 
 
 
