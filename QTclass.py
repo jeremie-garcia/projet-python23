@@ -27,6 +27,7 @@ class ObstacleItem(QGraphicsPolygonItem):
         #pour chaque vertices (x,y,z) je cree un point QTpointf et j'ajoute dans la liste
         for vertice in building.verticies:
             self.polygonpoints.append(QPointF(vertice[0],vertice[1]))
+            
 
         self.polygone = self.polygone = QPolygonF( self.polygonpoints )
         
@@ -35,6 +36,32 @@ class ObstacleItem(QGraphicsPolygonItem):
         #self.setRotation(self.drone.orient)
         self.setBrush(QBrush(Qt.cyan))
         self.setPen(QPen(Qt.cyan))
+        Modele.add_building(self.building)
+
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+        print("press", event)
+    
+    def mouseMoveEvent(self, event):
+        #quand on bouge alors on change la position du drone
+        # print("move",event.scenePos())
+        self.newx=event.scenePos().x()                                #je recupere la position de la souris
+        self.newy=event.scenePos().y()
+        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+        self.update_position()
+        
+    def update_position(self):
+        #self.setRotation(self.drone.orient)
+        self.building.verticies[0]=self.newx                           #je change la position du drone
+        self.building.verticies[1]=self.newy
+
+        self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
+        print(self.newx)
+        print(self.newy)
+        print(self.building.verticies)
+
+
+
+
 
 
 class VehiculeItem(QGraphicsPolygonItem):
@@ -59,8 +86,8 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.newy=0
         
         self.setRotation(self.drone.orient)
-        self.setBrush(QBrush(Qt.cyan))
-        self.setPen(QPen(Qt.blue))
+        self.setBrush(QBrush(Qt.red))
+        self.setPen(QPen(Qt.red))
 
         Modele.add_drone(self.drone)
 
@@ -79,7 +106,7 @@ class VehiculeItem(QGraphicsPolygonItem):
         
     def update_position(self):
         self.setRotation(self.drone.orient)
-        self.drone.posit[0]=self.newx                           #je change la position du drone
+        self.drone.posit[0]=self.newx                           #je change la position du building
         self.drone.posit[1]=self.newy
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
@@ -154,9 +181,6 @@ if __name__ == '__main__':
     main()
 
 
-
-Lbuild=[]
-Lvehic=[]
 
 Lbuild=[]
 Lvehic=[]
