@@ -9,7 +9,7 @@ class Drone:
         self.name = name #chaine de caractère
         self.posit = posit #liste de 3 points x,y,z
         self.target = target #liste de 3 points x,y,z
-        self.orient=orient
+        self.orient=orient #angle en degrès
         self.source_strength = source_strength #valeur fixe :0.5
         self.imag_source_strength = imag_source_strength #valeur fixe : 0.5
         self.sink_strength=sink_strength #valeur fixe : 5
@@ -24,15 +24,16 @@ class Modele:
 
     def add_drone(self,drone):
         self.drones.append(drone) #ajout de drone
-    def json(self): 
-        buildings_json = [{'name': Building.name, 'verticies': Building.verticies} for Building in self.buildings]
+
+    def json(self,cases_name): #cases_key = nom de la 'cases' du json 
+        buildings_json = [{'name': Building.name, 'verticies': Building.verticies} for Building in self.buildings] #dictionnaire avec les atributs du building (name et verticie)
         drones_json = [{'name': Drone.name, 'posit': Drone.posit, ' target': Drone.target, 'orientation' : Drone.orient, 'source_strength': Drone.source_strength, 'imag_source_strength' : Drone.imag_source_strength, 'sink_strength': Drone.sink_strength, 'safety': Drone.safety} for Drone in self.drones]
-        return {'buildings': buildings_json, 'drones': drones_json}
+        return {cases_name: {'buildings': buildings_json, 'drones': drones_json}} #dictionnaire de dictionnaire avec cases_name en clé principale et les dictionnaires drones et buildings
     
-    def save_to_file(liste_modele, fichier):
-        data_to_save = [Modele.json() for Modele in liste_modele]
+    def save_to_file(liste_modele, fichier,cases_name): #fonction pour enregistrer données json dans un fichier autres data.json
+        data_to_save = [Modele.json(cases_name) for Modele in liste_modele] #création liste de dictionnaire json
         with open(fichier, 'w') as file:
-            json.dump(data_to_save, file, indent=2)
+            json.dump(data_to_save, file, indent=2) #ouvrir et enregistrer la liste de dictionnaire dans un fichier json
         
 # Exemple :
 ex= Modele()
@@ -41,4 +42,4 @@ ex.add_building(Building('Building1',[[0.29, -0.40, 1.2],[-0.29, -0.40, 1.2],[-0
 ex2.add_building(Building('Building2', [[0.58, -5.4, 1.2],[-0.58, -1.39,1.2],[-0.59, -0.25, 1.2],[-0.58, 0.22, 1.2]]))
 ex.add_drone(Drone('Drone1', [0, 0, 0], [1, 1, 1],0, 0.5, 0.5, 5, 0.0001))
 ex2.add_drone(Drone('Drone2', [0, 0, 0], [1, 1, 1],0, 0.5, 0.5, 5, 0.0001))
-Modele.save_to_file([ex, ex2], 'data.json')
+Modele.save_to_file([ex, ex2], 'data.json','default')
