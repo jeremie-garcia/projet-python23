@@ -2,12 +2,12 @@ import sys
 from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen
 from PyQt5.QtCore import Qt, QPointF,QRectF
-import classmodel_tojason as tojason
+import tojason
 
 
 Modele=tojason.Modele()
 ang_drone=0
-ang_target=0
+ang_goal=0
 source_strength=0.5
 imag_source_strength=0.5
 sink_strength=5
@@ -65,7 +65,7 @@ class ObstacleItem(QGraphicsPolygonItem):
         self.building = building
         self.polygonpoints=[]
         #pour chaque vertices (x,y,z) je cree un point QTpointf et j'ajoute dans la liste
-        for vertice in building.verticies:
+        for vertice in building.vertices:
             self.polygonpoints.append(QPointF(vertice[0],vertice[1]))
             
 
@@ -91,11 +91,11 @@ class ObstacleItem(QGraphicsPolygonItem):
         
     def update_position(self):
         #self.setRotation(self.drone.orient)
-        self.building.verticies[0]=self.newx                           #je change la position du drone
-        self.building.verticies[1]=self.newy
+        self.building.vertices[0]=self.newx                           #je change la position du drone
+        self.building.vertices[1]=self.newy
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
-        print(self.building.verticies)
+        print(self.building.vertices)
 
 
 
@@ -106,12 +106,12 @@ class VehiculeItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.posit[0]
-        self.y1= vehicule.posit[1]
-        self.x2= vehicule.posit[0] - 25
-        self.y2= vehicule.posit[1] - 50
-        self.x3= vehicule.posit[0] - 50
-        self.y3=vehicule.posit[1]
+        self.x1= vehicule.position[0]
+        self.y1= vehicule.position[1]
+        self.x2= vehicule.position[0] - 25
+        self.y2= vehicule.position[1] - 50
+        self.x3= vehicule.position[0] - 50
+        self.y3=vehicule.position[1]
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
                         QPointF(self.x2, self.y2 ),
@@ -123,7 +123,7 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.newx=0
         self.newy=0
         
-        self.setRotation(self.drone.orient)
+        self.setRotation(self.drone.orientation)
         self.setBrush(QBrush(Qt.cyan))
         self.setPen(QPen(Qt.cyan))
 
@@ -140,27 +140,27 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.update_position()
         
     def update_position(self):
-        self.setRotation(self.drone.orient)
-        self.drone.target[0]=self.newx                           #je change la position du building
-        self.drone.target[1]=self.newy
+        self.setRotation(self.drone.orientation)
+        self.drone.goal[0]=self.newx                           #je change la position du building
+        self.drone.goal[1]=self.newy
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
-        print(self.drone.target)
+        print(self.drone.goal)
 
     
 
 
 
-class TargetItem(QGraphicsPolygonItem):
+class GoalItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.target[0]
-        self.y1= vehicule.target[1]
-        self.x2= vehicule.target[0] - 25
-        self.y2= vehicule.target[1] - 50
-        self.x3= vehicule.target[0] - 50
-        self.y3=vehicule.target[1]
+        self.x1= vehicule.goal[0]
+        self.y1= vehicule.goal[1]
+        self.x2= vehicule.goal[0] - 25
+        self.y2= vehicule.goal[1] - 50
+        self.x3= vehicule.goal[0] - 50
+        self.y3=vehicule.goal[1]
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
                         QPointF(self.x2, self.y2 ),
@@ -172,7 +172,7 @@ class TargetItem(QGraphicsPolygonItem):
         self.newx=0
         self.newy=0
         
-        self.setRotation(self.drone.orient)
+        self.setRotation(self.drone.orientation)
         self.setBrush(QBrush(Qt.green))
         self.setPen(QPen(Qt.green))
 
@@ -190,12 +190,12 @@ class TargetItem(QGraphicsPolygonItem):
         self.update_position()
         
     def update_position(self):
-        self.setRotation(self.drone.orient)
-        self.drone.posit[0]=self.newx                           #je change la position du building
-        self.drone.posit[1]=self.newy
+        self.setRotation(self.drone.orientation)
+        self.drone.position[0]=self.newx                           #je change la position du building
+        self.drone.position[1]=self.newy
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
-        print(self.drone.posit)
+        print(self.drone.position)
 
 
 
@@ -230,18 +230,18 @@ class MaFenetrePrincipale(QMainWindow):
 
     def ajoute_drone(self):
         #creer un drone
-        drone = tojason.Drone("AC1", [0,0,0,],[100,-300,0], ang_drone, source_strength, imag_source_strength, sink_strength, safety)
+        drone = tojason.Drone("AC1", [0,0,0,],[0,0,0], ang_drone, source_strength, imag_source_strength, sink_strength, safety)
         self.model.add_drone(drone)
 
         droneItem = VehiculeItem(drone)
-        targetItem = TargetItem(drone)
+        goalItem = GoalItem(drone)
         self.scene.addItem(droneItem)
-        self.scene.addItem(targetItem)
+        self.scene.addItem(goalItem)
 
     
     def ajoute_building(self):
-        verticies=[[0,0,1],[0,40,1],[40,40,1],[40,0,1]]
-        building = tojason.Building("OBS1",verticies)
+        vertices=[[0,0,1],[0,40,1],[40,40,1],[40,0,1]]
+        building = tojason.Building("OBS1",vertices)
         self.model.add_building(building)
 
         buildingItem = ObstacleItem(building)
@@ -261,6 +261,14 @@ def main():
 if __name__ == '__main__':
     main()
 
+
+
+Lbuild=[]
+Lvehic=[]
+
+
+Lbuild=[]
+Lvehic=[]
 
 
 Lbuild=[]
