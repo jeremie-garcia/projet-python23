@@ -4,7 +4,7 @@ from PyQt5.QtGui import QPolygonF, QBrush, QPen
 from PyQt5.QtCore import Qt, QPointF,QRectF
 import tojason
 from drone_monitoring import ClientVoliere
-
+import math
 
 Modele=tojason.Modele()
 
@@ -93,8 +93,12 @@ class ObstacleItem(QGraphicsPolygonItem):
         
     def update_position(self):
         #self.setRotation(self.drone.orient)
-        self.building.vertices[0]=self.newx                           #je change la position du building
-        self.building.vertices[1]=self.newy
+        nbs_sommets=len(self.building.vertices)
+        for i in range (nbs_sommets):
+            angle = 2 * math.pi * i / nbs_sommets
+            self.building.vertices[i][0]=self.newx + 60 * math.cos(angle)
+            self.building.vertices[i][1]=self.newy + 60 * math.sin(angle)
+        
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le building dans l'interface
         #print(self.building.vertices)
@@ -125,6 +129,7 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.setRotation(self.drone.orientation)
         self.setBrush(QBrush(Qt.cyan))
         self.setPen(QPen(Qt.cyan))
+        Modele.add_drone(self.drone)
 
     
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
@@ -136,15 +141,15 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.newx=event.scenePos().x()                                #je recupere la position de la souris
         self.newy=event.scenePos().y()
 
-        self.drone.position[0]=self.newx                           #je change la position du drone
-        self.drone.position[1]=self.newy
+        
 
         #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
         self.update_position()
         
     def update_position(self):
         self.setRotation(self.drone.orientation)
-        
+        self.drone.position[0]=self.newx
+        self.drone.position[1]=self.newy
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
         #print(self.drone.target)
 
@@ -218,13 +223,28 @@ class MaFenetrePrincipale(QMainWindow):
         toolbar.addWidget(bouton_ajouter_un_drone)
         bouton_ajouter_un_drone.clicked.connect(self.ajoute_drone)
 
-        bouton_ajouter_un_building=QPushButton("Ajouter un obstacle")
-        toolbar.addWidget(bouton_ajouter_un_building)
-        bouton_ajouter_un_building.clicked.connect(self.ajoute_building)
+        bouton_ajouter_un_buildingcarre=QPushButton("Ajouter un obstacle carrée")
+        toolbar.addWidget(bouton_ajouter_un_buildingcarre)
+        bouton_ajouter_un_buildingcarre.clicked.connect(self.ajoute_buildingcarre)
+
+        bouton_ajouter_un_buildinghexa=QPushButton("Ajouter un obstacle hexagonale")
+        toolbar.addWidget(bouton_ajouter_un_buildinghexa)
+        bouton_ajouter_un_buildinghexa.clicked.connect(self.ajoute_buildinghexa)
+
+        bouton_creerjason = QPushButton("creer le jason")
+        toolbar.addWidget(bouton_creerjason)
+        bouton_creerjason.clicked.connect(self.creer_json)
         
         self.show()
 
         self.model = tojason.Modele()
+
+    def creer_json(self):
+        modele = Modele
+        modele.json('fichier jason')
+
+        
+
 
 
     def update_drone_data(self, AC_ID, pos_x, pos_y,pos_z, quat_a, quat_b, quat_c, quat_d):
@@ -243,11 +263,21 @@ class MaFenetrePrincipale(QMainWindow):
         goalItem = GoalItem(drone)
         self.scene.addItem(droneItem)
         self.scene.addItem(goalItem)
+    
 
     
-    def ajoute_building(self):
+    def ajoute_buildingcarre(self):
         vertices=[[0,0,151.5],[0,60.5,151.5],[60.50,60.5,151.5],[60.5,0,151.5]]
-        building = tojason.Building("OBS1",vertices)
+        building = tojason.Building("OBScarré",vertices)
+        self.model.add_building(building)
+
+        buildingItem = ObstacleItem(building)
+        self.scene.addItem(buildingItem)
+
+
+    def ajoute_buildinghexa(self):
+        vertices=[[60,0,151.5],[30,51.96,151.5],[-30,51.96,151.5],[-60,0,151.5],[-30,-51.96,151.5],[30,-51.96,151.5]]
+        building = tojason.Building("OBShexa",vertices)
         self.model.add_building(building)
 
         buildingItem = ObstacleItem(building)
