@@ -1,0 +1,283 @@
+import sys
+from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
+from PyQt5.QtGui import QPolygonF, QBrush, QPen
+from PyQt5.QtCore import Qt, QPointF,QRectF
+import classmodel_tojason as tojason
+from drone_monitoring import ClientVoliere
+
+
+Modele=tojason.Modele()
+
+ang_drone=0
+ang_target=0
+source_strength=0.5
+imag_source_strength=0.5
+sink_strength=5
+safety=0.0001
+
+
+class GridItem(QGraphicsItem):
+    def __init__(self, rect, horizontalSpacing, verticalSpacing):
+        super(GridItem, self).__init__()
+
+        self.rect = rect
+        self.horizontalSpacing = horizontalSpacing
+        self.verticalSpacing = verticalSpacing
+
+    def paint(self, painter, option, widget): #option, widget il faut les laisser
+        pen = QPen()
+        pen.setColor(Qt.lightGray)
+        pen.setStyle(Qt.DashLine)
+        painter.setPen(pen)
+
+        # lignes horizontales
+        current_y = int(self.rect.top())
+        while current_y <= int(self.rect.bottom()):
+            painter.drawLine(int(self.rect.left()), current_y, int(self.rect.right()), current_y)
+            current_y += self.verticalSpacing
+
+        # lignes verticales
+        current_x = int(self.rect.left())
+        while current_x <= int(self.rect.right()):
+            painter.drawLine(current_x, int(self.rect.top()), current_x, int(self.rect.bottom()))
+            current_x += self.horizontalSpacing
+
+    def boundingRect(self):
+        return QRectF(self.rect)
+
+
+
+class MaSceneGraphique(QGraphicsScene):
+    def __init__(self, parent=None):
+        super(MaSceneGraphique, self).__init__(parent)
+
+        rect_item = QGraphicsRectItem(-400, -400, 800, 800)
+        self.addItem(rect_item)
+
+        grid_item = GridItem(rect_item.boundingRect(), 50, 50)  # Ajustez les valeurs entres les lignes
+        self.addItem(grid_item)
+
+
+
+
+
+class ObstacleItem(QGraphicsPolygonItem):
+    def __init__(self,building):
+
+        self.building = building
+        self.polygonpoints=[]
+        #pour chaque vertices (x,y,z) je cree un point QTpointf et j'ajoute dans la liste
+        for vertice in building.verticies:
+            self.polygonpoints.append(QPointF(vertice[0],vertice[1]))
+            
+
+        self.polygone = self.polygone = QPolygonF( self.polygonpoints )
+        
+        super(QGraphicsPolygonItem,self).__init__(self.polygone)
+        
+        #self.setRotation(self.drone.orient)
+        self.setBrush(QBrush(Qt.red))
+        self.setPen(QPen(Qt.red))
+        Modele.add_building(self.building)
+
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+        print("press", event)
+    
+    def mouseMoveEvent(self, event):
+        #quand on bouge alors on change la position du drone
+        # print("move",event.scenePos())
+        self.newx=event.scenePos().x()                                #je recupere la position de la souris
+        self.newy=event.scenePos().y()
+        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+        self.update_position()
+        
+    def update_position(self):
+        #self.setRotation(self.drone.orient)
+        self.building.vertices[0]=self.newx                           #je change la position du building
+        self.building.vertices[1]=self.newy
+
+        self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le building dans l'interface
+        #print(self.building.verticies)
+
+
+
+
+
+
+class VehiculeItem(QGraphicsPolygonItem):
+    def __init__(self,vehicule):
+
+        self.drone = vehicule
+        self.x1= vehicule.posit[0]
+        self.y1= vehicule.posit[1]
+        self.x2= vehicule.posit[0] - 25
+        self.y2= vehicule.posit[1] - 50
+        self.x3= vehicule.posit[0] - 50
+        self.y3=vehicule.posit[1]
+        self.polygone = QPolygonF([                              #je fais un polygone triangle
+                        QPointF(self.x1, self.y1),
+                        QPointF(self.x2, self.y2 ),
+                        QPointF(self.x3, self.y3)
+                    ])
+        
+        super(QGraphicsPolygonItem,self).__init__(self.polygone)
+        
+        self.setRotation(self.drone.orient)
+        self.setBrush(QBrush(Qt.cyan))
+        self.setPen(QPen(Qt.cyan))
+
+    
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+        print("press", event)
+    
+    def mouseMoveEvent(self, event):
+        #quand on bouge alors on change la position du drone
+        # print("move",event.scenePos())
+        self.newx=event.scenePos().x()                                #je recupere la position de la souris
+        self.newy=event.scenePos().y()
+
+        self.drone.posit[0]=self.newx                           #je change la position du drone
+        self.drone.posit[1]=self.newy
+
+        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+        self.update_position()
+        
+    def update_position(self):
+        self.setRotation(self.drone.orient)
+        
+        self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
+        #print(self.drone.target)
+
+    
+
+
+
+class TargetItem(QGraphicsPolygonItem):
+    def __init__(self,vehicule):
+
+        self.drone = vehicule
+        self.x1= vehicule.target[0]
+        self.y1= vehicule.target[1]
+        self.x2= vehicule.target[0] - 25
+        self.y2= vehicule.target[1] - 50
+        self.x3= vehicule.target[0] - 50
+        self.y3=vehicule.target[1]
+        self.polygone = QPolygonF([                              #je fais un polygone triangle
+                        QPointF(self.x1, self.y1),
+                        QPointF(self.x2, self.y2 ),
+                        QPointF(self.x3, self.y3)
+                    ])
+        
+        super(QGraphicsPolygonItem,self).__init__(self.polygone)
+        
+        self.setRotation(self.drone.orient)
+        self.setBrush(QBrush(Qt.green))
+        self.setPen(QPen(Qt.green))
+
+        
+    
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+        print("press", event)
+    
+    def mouseMoveEvent(self, event):
+        #quand on bouge alors on change la position du drone
+        # print("move",event.scenePos())
+        self.newx=event.scenePos().x()                                #je recupere la position de la souris
+        self.newy=event.scenePos().y()
+
+        self.drone.target[0]=self.newx                           #je change la position du building
+        self.drone.target[1]=self.newy
+
+        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+        self.update_position()
+        
+    def update_position(self):
+        self.setRotation(self.drone.orient)
+
+        self.setPos(QPointF(self.newx, self.newy))                  
+        #print(self.drone.target)
+
+
+
+class MaFenetrePrincipale(QMainWindow):
+    def __init__(self):
+        super(QMainWindow, self).__init__()
+        
+        self.scene = MaSceneGraphique(self)
+        self.vue = QGraphicsView(self.scene)
+        self.vue.fitInView(self.scene.itemsBoundingRect(),Qt.KeepAspectRatio)
+        self.setCentralWidget(self.vue)
+        self.setGeometry(100, 100, 800, 600)
+        self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
+        toolbar=QToolBar("Paramètres")
+        self.addToolBar(Qt.LeftToolBarArea,toolbar)
+        toolbar.setMovable(False)
+
+
+        bouton_ajouter_un_drone=QPushButton("Ajouter un drone")
+        toolbar.addWidget(bouton_ajouter_un_drone)
+        bouton_ajouter_un_drone.clicked.connect(self.ajoute_drone)
+
+        bouton_ajouter_un_building=QPushButton("Ajouter un obstacle")
+        toolbar.addWidget(bouton_ajouter_un_building)
+        bouton_ajouter_un_building.clicked.connect(self.ajoute_building)
+        
+        self.show()
+
+        self.model = tojason.Modele()
+
+
+    def update_drone_data(self, AC_ID, pos_x, pos_y,pos_z, quat_a, quat_b, quat_c, quat_d):
+        if(AC_ID == 68):
+           self.model.drone[0].posit=(pos_x,pos_y,pos_z) 
+           print(AC_ID, pos_x, pos_y)
+
+
+
+    def ajoute_drone(self):
+        #creer un drone
+        drone = tojason.Drone("68", [0,0,0],[0,0,0], ang_drone, source_strength, imag_source_strength, sink_strength, safety)
+        self.model.add_drone(drone)
+
+        droneItem = VehiculeItem(drone)
+        targetItem = TargetItem(drone)
+        self.scene.addItem(droneItem)
+        self.scene.addItem(targetItem)
+
+    
+    def ajoute_building(self):
+        verticies=[[0,0,151.5],[0,60.5,151.5],[60.50,60.5,151.5],[60.5,0,151.5]]
+        building = tojason.Building("OBS1",verticies)
+        self.model.add_building(building)
+
+        buildingItem = ObstacleItem(building)
+        self.scene.addItem(buildingItem)
+
+     
+
+def main():
+    app = QApplication(sys.argv)
+    print("c tout bon")
+
+    voliere = ClientVoliere()
+    fenetre = MaFenetrePrincipale()
+
+
+    voliere.drone_data.connect(fenetre.update_drone_data)
+    #if voliere.drone_data[0]==888:
+    #    tojason.Drone.posit=(voliere.drone_data[1],voliere.drone_data[2],voliere.drone_data[3])
+
+    app.aboutToQuit.connect(voliere.stop)
+
+    
+    sys.exit(app.exec_())
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+Lbuild=[]
+Lvehic=[]
+
