@@ -5,11 +5,12 @@ from PyQt5.QtCore import Qt, QPointF,QRectF
 import classmodel_tojason as tojason
 from drone_monitoring import ClientVoliere
 import math
+from PIL import Image
 
 Modele=tojason.Modele()
 
-ang_drone=0
-ang_goal=0
+ang_drone=180
+ang_goal=180
 source_strength=0.5
 imag_source_strength=0.5
 sink_strength=5
@@ -30,13 +31,26 @@ class MaSceneGraphique(QGraphicsScene):
 
         # Charger l'image et redimensionner
         image_path = 'grille.png'
+
+        img = Image.open(image_path)
+        flipped_image = img.transpose(Image.FLIP_TOP_BOTTOM)
+        flipped_image.save('flipped_grille.png')
+
+        image_path = 'flipped_grille'
+
         pixmap = QPixmap(image_path)
         scaled_pixmap = pixmap.scaled(image_size, image_size, Qt.KeepAspectRatio)
+
+        
+
+        # flippedimage = pixmap.toImage().mirrored(False,True)
+        # flippedpixmap = QPixmap.fromImage(flippedimage)
+        # imageItem = QGraphicsPixmapItem(flippedpixmap)
 
         # Calculer les coordonnées pour centrer l'image
         x_center = -image_size / 2
         y_center = -image_size / 2
-
+        
         # Ajouter l'image à la scène
         grid_item = QGraphicsPixmapItem(scaled_pixmap)
         grid_item.setPos(x_center, y_center)
@@ -202,6 +216,7 @@ class MaFenetrePrincipale(QMainWindow):
         
         self.scene = MaSceneGraphique(self)
         self.vue = QGraphicsView(self.scene)
+        self.vue.scale(1,-1)
         self.vue.fitInView(self.scene.itemsBoundingRect(),Qt.KeepAspectRatio)
         self.setCentralWidget(self.vue)
         self.setGeometry(100, 100, 800, 600)
