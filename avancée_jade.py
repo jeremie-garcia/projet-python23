@@ -1,11 +1,12 @@
 import sys
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QGraphicsView, QSlider,QGraphicsRectItem, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
-from PyQt5.QtGui import QPolygonF, QBrush, QPen,QFont,QPixmap,QTransform
-from PyQt5.QtCore import Qt, QPointF,QRectF
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QComboBox, QDialog, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider,QGraphicsRectItem, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
+from PyQt5.QtGui import QPolygonF, QBrush, QPen,QFont,QPixmap,QTransform, QPainter, QIcon 
+from PyQt5.QtCore import Qt, QPointF,QRectF, QSize
 import classmodel_tojason as tojason
 from drone_monitoring import ClientVoliere
 import math
 from PIL import Image
+
 
 Modele=tojason.Modele()
 
@@ -30,13 +31,15 @@ class MaSceneGraphique(QGraphicsScene):
         image_size = 800
 
         # Charger l'image et redimensionner
-        image_path = 'grille.png'
+        image_path = 'grilleflipped.jpg'
 
-        img = Image.open(image_path)
-        flipped_image = img.transpose(Image.FLIP_TOP_BOTTOM)
-        flipped_image.save('flipped_grille.png')
+        
 
-        image_path = 'flipped_grille'
+        #img = Image.open(image_path)
+        #flipped_image = img.transpose(Image.FLIP_TOP_BOTTOM)
+        #flipped_image.save('flipped_grille.png')
+
+        #image_path = 'flipped_grille'
 
         pixmap = QPixmap(image_path)
         scaled_pixmap = pixmap.scaled(image_size, image_size, Qt.KeepAspectRatio)
@@ -118,12 +121,12 @@ class VehiculeItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.position[0]
-        self.y1= vehicule.position[1]
-        self.x2= vehicule.position[0] - 25
-        self.y2= vehicule.position[1] - 50
-        self.x3= vehicule.position[0] - 50
-        self.y3=vehicule.position[1]
+        self.x1= vehicule.position[0] + 25
+        self.y1= vehicule.position[1] + 25
+        self.x2= vehicule.position[0] 
+        self.y2= vehicule.position[1] - 25
+        self.x3= vehicule.position[0] - 25
+        self.y3=vehicule.position[1] + 25
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
                         QPointF(self.x2, self.y2 ),
@@ -133,24 +136,44 @@ class VehiculeItem(QGraphicsPolygonItem):
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
         
         self.setRotation(self.drone.orientation)
-        self.setBrush(QBrush(Qt.cyan))
+        self.setBrush(QBrush(Qt.black))
         self.setPen(QPen(Qt.cyan))
         Modele.add_drone(self.drone)
 
-    
+
+
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
-        print("press", event)
-    
-    def mouseMoveEvent(self, event):
-        #quand on bouge alors on change la position du drone
-        # print("move",event.scenePos())
+        if event.button() == Qt.RightButton:
+         
+            details_dialog = MaFenetreSecondaire(self)
+            details_dialog.exec_()
+
+        elif event.button() == Qt.LeftButton:
+            # Left mouse button is pressed
+            self.handle_left_button_press(event)
+
+    def handle_right_button_press(self, event):
+        # Handle right mouse button press
+        pass
+
+    def handle_left_button_press(self, event):
+        # Handle left mouse button press
+        pass
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        if event.buttons() & Qt.LeftButton:
+            # Right mouse button is being held down
+            self.handle_left_button_held(event)
+            
+
+    def handle_left_button_held(self, event):
+        # Handle right mouse button being held down
         self.newx=event.scenePos().x()                                #je recupere la position de la souris
         self.newy=event.scenePos().y()
-
-        
+        self.update_position()
+        # print("press", event)
 
         #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
-        self.update_position()
         
     def update_position(self):
         self.setRotation(self.drone.orientation)
@@ -159,20 +182,70 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
         #print(self.drone.target)
 
-    
+    def update_drone_color(self):
+        color_name = MaFenetreSecondaire.color_combobox.currentText()
+        color_dict = {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta}
+        self.setBrush(QBrush(color_dict.get(color_name, Qt.red)))
+
+    def update_drone_ID(self):
+        self.drone.ID = MaFenetreSecondaire.name_line_edit.selectionChanged
+
+    def update_drone_ID(self, new_text):
+        self.drone.ID = new_text
 
 
+
+
+class MaFenetreSecondaire(QDialog):
+    def __init__(self, VehiculeItem):
+        super(MaFenetreSecondaire, self).__init__()
+
+        self.setWindowTitle("Drone Details")
+        self.setGeometry(100, 100, 300, 150)
+
+        # label avec le nom du drone
+        name_label = QLabel(f"Drone ID: {VehiculeItem.drone.ID}")
+
+        # self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
+        # self.name_line_edit.selectionChanged.connect(VehiculeItem.update_drone_ID)
+
+        self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
+        self.name_line_edit.textChanged.connect(VehiculeItem.update_drone_ID)
+
+
+        
+        # Menu déroulant avec la couleur
+        self.color_combobox = QComboBox()
+        self.color_combobox.addItems(['Red', 'Green', 'Blue', 'Yellow', 'Purple'])
+        self.color_combobox.setCurrentIndex(0)
+        self.color_combobox.currentIndexChanged.connect(VehiculeItem.update_drone_color)
+       
+
+        # Ok button
+        ok_button = QPushButton("OK")
+        ok_button.clicked.connect(self.accept)
+
+       # mets en place les layouts
+        layout = QVBoxLayout()
+        layout.addWidget(name_label)
+        layout.addWidget(self.name_line_edit)
+        layout.addWidget(self.color_combobox)
+        layout.addWidget(ok_button)
+        
+        # Initialisation classique
+        self.setLayout(layout)   
+        self.show()
 
 class GoalItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.goal[0]
-        self.y1= vehicule.goal[1]
-        self.x2= vehicule.goal[0] - 25
-        self.y2= vehicule.goal[1] - 50
-        self.x3= vehicule.goal[0] - 50
-        self.y3=vehicule.goal[1]
+        self.x1= vehicule.position[0] + 25
+        self.y1= vehicule.position[1] + 25
+        self.x2= vehicule.position[0] 
+        self.y2= vehicule.position[1] - 25
+        self.x3= vehicule.position[0] - 25
+        self.y3=vehicule.position[1] + 25
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
                         QPointF(self.x2, self.y2 ),
@@ -189,6 +262,8 @@ class GoalItem(QGraphicsPolygonItem):
     
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         print("press", event)
+
+
     
     def mouseMoveEvent(self, event):
         #quand on bouge alors on change la position du drone
@@ -207,55 +282,164 @@ class GoalItem(QGraphicsPolygonItem):
 
         self.setPos(QPointF(self.newx, self.newy))                  
         #print(self.drone.goal)
+    
 
+
+
+
+
+
+class ZoomButtonP(QPushButton):
+    def __init__(self, icon_path, zoom_factor, *args, **kwargs):
+        super(ZoomButtonP, self).__init__(*args, **kwargs)
+        self.zoom_factor = zoom_factor
+        self.setIcon(QIcon(icon_path))
+        self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
+        self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
+
+
+        
+
+class TriangleWidget(QPushButton):
+    def __init__(self, main_window):
+        super(TriangleWidget, self,).__init__()
+        self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
+        self.clicked.connect(self.main_window.ajoute_drone)  # Connectez le clic à la méthode de la fenêtre principale
+        self.setGeometry(0, 0, 100, 100)  # Ajustez la taille 
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        # Définir les points du trig
+        points = [QPointF(0, self.height()), QPointF(self.width(), self.height()), QPointF(self.width() / 2, 0)]
+
+        # Créer le trig
+        triangle_polygon = QPolygonF(points)
+
+        # Dessiner le trig
+        painter.setBrush(QBrush(Qt.cyan))
+        painter.setPen(QPen(Qt.black))
+        painter.drawPolygon(triangle_polygon)
+
+
+class HexagonWidget(QPushButton):
+    def __init__(self, main_window):
+        super(HexagonWidget, self).__init__()
+        self.main_window = main_window  
+        self.clicked.connect(self.main_window.ajoute_buildinghexa)  
+        self.setGeometry(0, 0, 50, 50)  
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        # Define the points of the hexagon
+        points = [
+            QPointF(0, self.height()),
+            QPointF(self.width() / 4, 0),
+            QPointF(3 * self.width() / 4, 0),
+            QPointF(self.width(), self.height()),
+            QPointF(3 * self.width() / 4, 2 * self.height()),
+            QPointF(self.width() / 4, 2 * self.height())
+        ]
+
+       
+        hexagon_polygon = QPolygonF(points)
+
+    
+        painter.setBrush(QBrush(Qt.red))
+        painter.setPen(QPen(Qt.black))
+        painter.drawPolygon(hexagon_polygon)
+
+
+class CarreeWidget(QPushButton):
+    def __init__(self, main_window):
+        super(CarreeWidget, self).__init__()
+        self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
+        self.clicked.connect(self.main_window.ajoute_buildingcarre)  # Connectez le clic à la méthode de la fenêtre principale
+        self.setGeometry(0, 0, 50, 50)  # taille du widget
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        # Définir les points du carré
+        points = [QPointF(0, 0), QPointF(self.width(), 0), QPointF(self.width(), self.height()), QPointF(0, self.height())]
+
+        # On crée le carrée
+        carree_polygon = QPolygonF(points)
+
+       # on dessine
+        painter.setBrush(QBrush(Qt.red))
+        painter.setPen(QPen(Qt.black))
+        painter.drawPolygon(carree_polygon)
 
 
 class MaFenetrePrincipale(QMainWindow):
     def __init__(self):
         super(QMainWindow, self).__init__()
-        
+
         self.scene = MaSceneGraphique(self)
         self.vue = QGraphicsView(self.scene)
-        self.vue.scale(1,-1)
-        self.vue.fitInView(self.scene.itemsBoundingRect(),Qt.KeepAspectRatio)
-        self.setCentralWidget(self.vue)
+        self.vue.scale(1, -1)
+        self.vue.fitInView(self.scene.itemsBoundingRect(), Qt.KeepAspectRatio) 
+        self.button_jason = QPushButton('créer Jason')       
+        # Créer un layout principal
+        mainlayout = QHBoxLayout()
+
+        # Ajouter layout1 à gauche
+        layout1 = self.create_layout1()  # Vous devriez implémenter votre propre fonction pour créer layout1
+        mainlayout.addLayout(layout1)
+
+        # Ajouter la scène graphique à droite
+        mainlayout.addWidget(self.vue)
+
+        # Créer le widget central
+        centralWidget = QWidget()
+        centralWidget.setLayout(mainlayout)
+        self.setCentralWidget(centralWidget)
+
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
-        toolbar=QToolBar("Paramètres")
-        self.addToolBar(Qt.LeftToolBarArea,toolbar)
-        toolbar.setMovable(False)
-
-
-        bouton_ajouter_un_drone=QPushButton("Ajouter un drone")
-        toolbar.addWidget(bouton_ajouter_un_drone)
-        bouton_ajouter_un_drone.clicked.connect(self.ajoute_drone)
-
-        bouton_ajouter_un_buildingcarre=QPushButton("Ajouter un obstacle carrée")
-        toolbar.addWidget(bouton_ajouter_un_buildingcarre)
-        bouton_ajouter_un_buildingcarre.clicked.connect(self.ajoute_buildingcarre)
-
-        bouton_ajouter_un_buildinghexa=QPushButton("Ajouter un obstacle hexagonale")
-        toolbar.addWidget(bouton_ajouter_un_buildinghexa)
-        bouton_ajouter_un_buildinghexa.clicked.connect(self.ajoute_buildinghexa)
-
-        bouton_creerjason = QPushButton("creer le jason")
-        toolbar.addWidget(bouton_creerjason)
-        bouton_creerjason.clicked.connect(self.creer_json)
-        
-        self.show()
-
         self.model = tojason.Modele()
+        self.button_jason.clicked.connect(self.creer_json)
 
-        # Ajouter des boutons de zoom à la barre d'outils
-        bouton_zoom_in = QPushButton("Zoom Avant")
-        toolbar.addWidget(bouton_zoom_in)
-        bouton_zoom_in.clicked.connect(lambda: self.zoom(1.2))
-
-        bouton_zoom_out = QPushButton("Zoom Arrière")
-        toolbar.addWidget(bouton_zoom_out)
-        bouton_zoom_out.clicked.connect(lambda: self.zoom(0.8))
 
         self.show()
+
+    def create_layout1(self):
+        layout1 = QVBoxLayout()
+
+        # Ajoutez des widgets à la mise en page
+        # label_info = QLabel("Informations personnalisées")
+        # layout1.addWidget(label_info)
+
+       # Ajouter le triangle à votre layout personnalisé
+        triangle_widget = TriangleWidget(self)
+        layout1.addWidget(triangle_widget)
+
+
+
+        # Ajouter le carree à notre layout 
+        carree_widget = CarreeWidget(self)
+        layout1.addWidget(carree_widget)
+
+        # Ajouter l'hexagone a notre layout
+        hexa_widget = HexagonWidget(self)
+        layout1.addWidget(hexa_widget)
+
+        #  # Ajouter des boutons de zoom à votre layout personnalisé
+        zoom_in_button = ZoomButtonP('ZoomButtonP.png', 2.0, 'Zoom In')
+        # zoom_out_button = ZoomButton('zoom_out_icon.png', 0.5, 'Zoom Out')
+        layout1.addWidget(zoom_in_button)
+        # layout1.addWidget(zoom_out_button)
+    
+        
+        layout1.addWidget(self.button_jason)
+        # self.button_jason.clicked.connect(self.creer_json)
+
+        return layout1
 
     def zoom(self, facteur):
         echelle_actuelle = self.vue.transform().m11()
@@ -263,16 +447,11 @@ class MaFenetrePrincipale(QMainWindow):
         self.vue.setTransform(QTransform().scale(nouvelle_echelle, nouvelle_echelle))
 
 
-
-
     def creer_json(self):
         modele = Modele
         modele.json('fichier jason')
 
         
-
-
-
     def update_drone_data(self, AC_ID, pos_x, pos_y,pos_z, quat_a, quat_b, quat_c, quat_d):
         # if(AC_ID == 68):
         #    self.model.drone[0].position=(pos_x,pos_y,pos_z) 
@@ -294,8 +473,6 @@ class MaFenetrePrincipale(QMainWindow):
         self.scene.addItem(droneItem)
         self.scene.addItem(goalItem)
     
-
-    
     def ajoute_buildingcarre(self):
         vertices=[[0,0,151.5],[0,60.5,151.5],[60.50,60.5,151.5],[60.5,0,151.5]]
         building = tojason.Building("OBScarré",vertices)
@@ -314,7 +491,6 @@ class MaFenetrePrincipale(QMainWindow):
         self.scene.addItem(buildingItem)
 
      
-
 def main():
     app = QApplication(sys.argv)
     print("c tout bon")
