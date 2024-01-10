@@ -2,8 +2,9 @@ import sys
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QSpacerItem, QSizePolicy, QComboBox, QDialog, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider,QGraphicsRectItem, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen,QFont,QPixmap,QTransform, QPainter, QIcon 
 from PyQt5.QtCore import Qt, QPointF,QRectF, QSize
-import classmodel_tojason as tojason
+import classmodel_tojson as tojason
 from drone_monitoring import ClientVoliere
+import subprocess
 import math
 #from PIL import Image
 
@@ -293,10 +294,8 @@ class ZoomButtonP(QPushButton):
         self.zoom_factor = zoom_factor
         self.main_window = main_window
         self.setIcon(QIcon(icon_path))
-        self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
-        # self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
-
-        self.clicked.connect(lambda : self.main_window.zoom(self.zoom_factor))
+        self.setIconSize(QSize(50, 50))
+        self.clicked.connect(lambda: self.main_window.zoom(self.zoom_factor))
 
 
 class ZoomButtonN(QPushButton):
@@ -305,10 +304,9 @@ class ZoomButtonN(QPushButton):
         self.zoom_factor = zoom_factor
         self.main_window = main_window
         self.setIcon(QIcon(icon_path))
-        self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
-        # self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
+        self.setIconSize(QSize(50, 50))
+        self.clicked.connect(lambda: self.main_window.zoom_out(self.zoom_factor))
 
-        self.clicked.connect(lambda : self.main_window.zoom(self.zoom_factor))
 
         
 
@@ -493,8 +491,11 @@ class MaFenetrePrincipale(QMainWindow):
     def zoom(self, facteur):
         echelle_actuelle = self.vue.transform().m11()
         nouvelle_echelle = echelle_actuelle * facteur
-        self.vue.setTransform(QTransform().scale(nouvelle_echelle, nouvelle_echelle))
-
+        self.vue.setTransform(QTransform().translate(self.vue.viewport().width() / 2, self.vue.viewport().height() / 2).scale(nouvelle_echelle, -nouvelle_echelle))
+    def zoom_out(self, facteur):
+        echelle_actuelle = self.vue.transform().m11()
+        nouvelle_echelle = echelle_actuelle * facteur
+        self.vue.setTransform(QTransform().translate(self.vue.viewport().width() / 2, self.vue.viewport().height() / 2).scale(nouvelle_echelle, -nouvelle_echelle))
 
     def creer_json(self):
         modele = Modele
