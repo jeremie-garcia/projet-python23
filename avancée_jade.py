@@ -4,7 +4,6 @@ from PyQt5.QtGui import QPolygonF, QBrush, QPen,QFont,QPixmap,QTransform, QPaint
 from PyQt5.QtCore import Qt, QPointF,QRectF, QSize
 import classmodel_tojason as tojason
 from drone_monitoring import ClientVoliere
-import subprocess
 import math
 #from PIL import Image
 
