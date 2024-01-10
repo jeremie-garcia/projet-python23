@@ -1,0 +1,29 @@
+class HexagonWidget(QPushButton):
+    def __init__(self, main_window):
+        super(HexagonWidget, self).__init__()
+        self.main_window = main_window  
+        self.clicked.connect(self.main_window.ajoute_buildinghexa)  
+        self.setFixedSize(50, 50)  
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        # Define the points of the regular hexagon
+        side_length = self.width() / 2
+        apothem = side_length * math.sqrt(3) / 2
+
+        points = [
+            QPointF(self.width() / 2, 0),
+            QPointF(self.width(), apothem),
+            QPointF(self.width(), apothem + side_length),
+            QPointF(self.width() / 2, 2 * apothem + side_length),
+            QPointF(0, apothem + side_length),
+            QPointF(0, apothem)
+        ]
+
+        hexagon_polygon = QPolygonF(points)
+
+        painter.setBrush(QBrush(Qt.red))
+        painter.setPen(QPen(Qt.black))
+        painter.drawPolygon(hexagon_polygon)
