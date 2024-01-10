@@ -142,34 +142,38 @@ class VehiculeItem(QGraphicsPolygonItem):
 
 
 
-
-    
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         if event.button() == Qt.RightButton:
-            # Open the secondary window with drone details
-            details_dialog = DroneDetailsDialog(self)
+         
+            details_dialog = MaFenetreSecondaire(self)
             details_dialog.exec_()
+
         elif event.button() == Qt.LeftButton:
-            self.newx=event.scenePos().x()                                #je recupere la position de la souris
-            self.newy=event.scenePos().y()
-            print("press", event)
-    
-    # def mouseMoveEvent(self, event):
-    #     #quand on bouge alors on change la position du drone
-    #     # print("move",event.scenePos())
-    #     self.newx=event.scenePos().x()                                #je recupere la position de la souris
-    #     self.newy=event.scenePos().y()
+            # Left mouse button is pressed
+            self.handle_left_button_press(event)
 
-    # def mouseRightclickEvent(self, eventR: QGraphicsSceneMouseEvent) -> None:
-    #     if eventR.button() == Qt.RightButton:
-    #         # Open the secondary window with drone details
-    #         details_dialog = DroneDetailsDialog(self.drone.ID)
-    #         details_dialog.exec_()
+    def handle_right_button_press(self, event):
+        # Handle right mouse button press
+        pass
 
-        
+    def handle_left_button_press(self, event):
+        # Handle left mouse button press
+        pass
+
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        if event.buttons() & Qt.LeftButton:
+            # Right mouse button is being held down
+            self.handle_left_button_held(event)
+            
+
+    def handle_left_button_held(self, event):
+        # Handle right mouse button being held down
+        self.newx=event.scenePos().x()                                #je recupere la position de la souris
+        self.newy=event.scenePos().y()
+        self.update_position()
+        # print("press", event)
 
         #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
-        self.update_position()
         
     def update_position(self):
         self.setRotation(self.drone.orientation)
@@ -179,41 +183,56 @@ class VehiculeItem(QGraphicsPolygonItem):
         #print(self.drone.target)
 
     def update_drone_color(self):
-        color_name = DroneDetailsDialog.color_combobox.currentText()
+        color_name = MaFenetreSecondaire.color_combobox.currentText()
         color_dict = {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta}
         self.setBrush(QBrush(color_dict.get(color_name, Qt.red)))
 
+    def update_drone_ID(self):
+        self.drone.ID = MaFenetreSecondaire.name_line_edit.selectionChanged
+
+    def update_drone_ID(self, new_text):
+        self.drone.ID = new_text
 
 
 
-class DroneDetailsDialog(QDialog):
+
+class MaFenetreSecondaire(QDialog):
     def __init__(self, VehiculeItem):
-        super(DroneDetailsDialog, self).__init__()
+        super(MaFenetreSecondaire, self).__init__()
 
         self.setWindowTitle("Drone Details")
         self.setGeometry(100, 100, 300, 150)
 
-        # Create QLabel to display drone name and color
+        # label avec le nom du drone
         name_label = QLabel(f"Drone ID: {VehiculeItem.drone.ID}")
-        
 
+        # self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
+        # self.name_line_edit.selectionChanged.connect(VehiculeItem.update_drone_ID)
+
+        self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
+        self.name_line_edit.textChanged.connect(VehiculeItem.update_drone_ID)
+
+
+        
+        # Menu déroulant avec la couleur
         self.color_combobox = QComboBox()
         self.color_combobox.addItems(['Red', 'Green', 'Blue', 'Yellow', 'Purple'])
         self.color_combobox.setCurrentIndex(0)
         self.color_combobox.currentIndexChanged.connect(VehiculeItem.update_drone_color)
        
 
-        
+        # Ok button
         ok_button = QPushButton("OK")
         ok_button.clicked.connect(self.accept)
 
        # mets en place les layouts
         layout = QVBoxLayout()
         layout.addWidget(name_label)
+        layout.addWidget(self.name_line_edit)
         layout.addWidget(self.color_combobox)
-        
         layout.addWidget(ok_button)
         
+        # Initialisation classique
         self.setLayout(layout)   
         self.show()
 
