@@ -1,11 +1,12 @@
 import sys
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QComboBox, QDialog, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider,QGraphicsRectItem, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QSpacerItem, QSizePolicy, QComboBox, QDialog, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider,QGraphicsRectItem, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen,QFont,QPixmap,QTransform, QPainter, QIcon 
 from PyQt5.QtCore import Qt, QPointF,QRectF, QSize
 import classmodel_tojason as tojason
 from drone_monitoring import ClientVoliere
+import subprocess
 import math
-from PIL import Image
+#from PIL import Image
 
 
 Modele=tojason.Modele()
@@ -194,8 +195,6 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.drone.ID = new_text
 
 
-
-
 class MaFenetreSecondaire(QDialog):
     def __init__(self, VehiculeItem):
         super(MaFenetreSecondaire, self).__init__()
@@ -290,13 +289,27 @@ class GoalItem(QGraphicsPolygonItem):
 
 
 class ZoomButtonP(QPushButton):
-    def __init__(self, icon_path, zoom_factor, *args, **kwargs):
+    def __init__(self, icon_path, zoom_factor, main_window , *args, **kwargs):
         super(ZoomButtonP, self).__init__(*args, **kwargs)
         self.zoom_factor = zoom_factor
+        self.main_window = main_window
         self.setIcon(QIcon(icon_path))
         self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
-        self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
+        # self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
 
+        self.clicked.connect(lambda : self.main_window.zoom(self.zoom_factor))
+
+
+class ZoomButtonN(QPushButton):
+    def __init__(self, icon_path, zoom_factor, main_window , *args, **kwargs):
+        super(ZoomButtonN, self).__init__(*args, **kwargs)
+        self.zoom_factor = zoom_factor
+        self.main_window = main_window
+        self.setIcon(QIcon(icon_path))
+        self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
+        # self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
+
+        self.clicked.connect(lambda : self.main_window.zoom(self.zoom_factor))
 
         
 
@@ -305,7 +318,7 @@ class TriangleWidget(QPushButton):
         super(TriangleWidget, self,).__init__()
         self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
         self.clicked.connect(self.main_window.ajoute_drone)  # Connectez le clic à la méthode de la fenêtre principale
-        self.setGeometry(0, 0, 100, 100)  # Ajustez la taille 
+        self.setFixedSize(50, 50)  # Ajustez la taille 
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -328,26 +341,32 @@ class HexagonWidget(QPushButton):
         super(HexagonWidget, self).__init__()
         self.main_window = main_window  
         self.clicked.connect(self.main_window.ajoute_buildinghexa)  
-        self.setGeometry(0, 0, 50, 50)  
+        self.setFixedSize(50, 50)  
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
+
+        # Define the points of the regular hexagon
+        side_length = self.width() / 2
+        apothem = side_length * math.sqrt(3) / 2
+
         # Define the points of the hexagon
         points = [
-            QPointF(0, self.height()),
-            QPointF(self.width() / 4, 0),
-            QPointF(3 * self.width() / 4, 0),
-            QPointF(self.width(), self.height()),
-            QPointF(3 * self.width() / 4, 2 * self.height()),
-            QPointF(self.width() / 4, 2 * self.height())
+            QPointF(self.width() / 2, 0),
+            QPointF(self.width(), apothem),
+            QPointF(self.width(), apothem + side_length),
+            QPointF(self.width() / 2, 2 * apothem + side_length),
+            QPointF(0, apothem + side_length),
+            QPointF(0, apothem)
         ]
 
        
         hexagon_polygon = QPolygonF(points)
 
-    
+
+
         painter.setBrush(QBrush(Qt.red))
         painter.setPen(QPen(Qt.black))
         painter.drawPolygon(hexagon_polygon)
@@ -358,7 +377,7 @@ class CarreeWidget(QPushButton):
         super(CarreeWidget, self).__init__()
         self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
         self.clicked.connect(self.main_window.ajoute_buildingcarre)  # Connectez le clic à la méthode de la fenêtre principale
-        self.setGeometry(0, 0, 50, 50)  # taille du widget
+        self.setFixedSize(50, 50)  # taille du widget
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -384,7 +403,8 @@ class MaFenetrePrincipale(QMainWindow):
         self.vue = QGraphicsView(self.scene)
         self.vue.scale(1, -1)
         self.vue.fitInView(self.scene.itemsBoundingRect(), Qt.KeepAspectRatio) 
-        self.button_jason = QPushButton('créer Jason')       
+        self.button_jason = QPushButton('créer Jason')
+        self.gflow_button = QPushButton('lancer gflow')      
         # Créer un layout principal
         mainlayout = QHBoxLayout()
 
@@ -404,9 +424,17 @@ class MaFenetrePrincipale(QMainWindow):
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
         self.model = tojason.Modele()
         self.button_jason.clicked.connect(self.creer_json)
+        
+        gflow = "main_gflow.py"
+        def opengflow():
+            with open(gflow,"r") as file:
+                gflowgo=file.read() 
+            exec(gflowgo)
 
+        self.gflow_button.clicked.connect(opengflow)
 
         self.show()
+
 
     def create_layout1(self):
         layout1 = QVBoxLayout()
@@ -416,27 +444,49 @@ class MaFenetrePrincipale(QMainWindow):
         # layout1.addWidget(label_info)
 
        # Ajouter le triangle à votre layout personnalisé
+        label_triangle = QLabel ('ajouter un drone')
         triangle_widget = TriangleWidget(self)
         layout1.addWidget(triangle_widget)
+        
+        layout1.addWidget(label_triangle)
 
-
+        spacer1 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        layout1.addItem(spacer1)
 
         # Ajouter le carree à notre layout 
+        label_carree = QLabel ('ajouter un building carré')
         carree_widget = CarreeWidget(self)
         layout1.addWidget(carree_widget)
+       
+        layout1.addWidget(label_carree)
+
+      
 
         # Ajouter l'hexagone a notre layout
+        label_hexa = QLabel ('ajouter un building hexagonal')
         hexa_widget = HexagonWidget(self)
         layout1.addWidget(hexa_widget)
+        layout1.addWidget(label_hexa)
+
+       
 
         #  # Ajouter des boutons de zoom à votre layout personnalisé
-        zoom_in_button = ZoomButtonP('ZoomButtonP.png', 2.0, 'Zoom In')
-        # zoom_out_button = ZoomButton('zoom_out_icon.png', 0.5, 'Zoom Out')
+        zoom_in_button = ZoomButtonP('ZoomButtonP.jpg', 1.5 , self ,'Zoom In')
+        zoom_out_button = ZoomButtonN('zoom_out_icon.png', 0.5, self , 'Zoom Out')
         layout1.addWidget(zoom_in_button)
-        # layout1.addWidget(zoom_out_button)
-    
-        
+        layout1.addWidget(zoom_out_button)
+
+     
+        # boutton jason
         layout1.addWidget(self.button_jason)
+
+  
+
+        # boutton Jflow
+        gflow_button = QPushButton('lacer gflow')
+        layout1.addWidget (self.gflow_button)
+        
+        
         # self.button_jason.clicked.connect(self.creer_json)
 
         return layout1
@@ -495,6 +545,11 @@ def main():
     app = QApplication(sys.argv)
     print("c tout bon")
     scene = MaSceneGraphique()
+
+    # gflow = "main_gflow.py"
+    # with open(gflow,"r") as file:
+    #     gflow=file.read() 
+
     
     # Crée la vue graphique directement
     #view = QGraphicsView(scene)
@@ -517,6 +572,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 
 
