@@ -1,11 +1,13 @@
 import sys
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QComboBox, QDialog, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider,QGraphicsRectItem, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QSpacerItem, QSizePolicy, QComboBox, QDialog, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider,QGraphicsRectItem, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen,QFont,QPixmap,QTransform, QPainter, QIcon 
 from PyQt5.QtCore import Qt, QPointF,QRectF, QSize
 import classmodel_tojson as tojason
 from drone_monitoring import ClientVoliere
+import subprocess
 import math
 #from PIL import Image
+
 
 
 Modele=tojason.Modele()
@@ -114,6 +116,19 @@ class ObstacleItem(QGraphicsPolygonItem):
         #print(self.building.vertices)
 
 
+## Anglais Aviation Issues:
+        # He has the order to hold the point 
+        # Horever, the red light wich tells you to hold the point was active
+        # Maybe he didn't see the line
+
+
+        # polution can apply to noise + light
+        # strike = collision , for example : bird strike
+        # la piste en parlant du sol , tarmac, aspehlt
+        # go around = missed approach could be done by purpose (if A350 has seen the Dash 8)
+
+
+
 
 
 
@@ -136,17 +151,22 @@ class VehiculeItem(QGraphicsPolygonItem):
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
         
         self.setRotation(self.drone.orientation)
-        self.setBrush(QBrush(Qt.black))
+        self.setBrush(QBrush(Qt.cyan))
         self.setPen(QPen(Qt.cyan))
         Modele.add_drone(self.drone)
+        # self.scene = scene  # Ajoutez une référence à la scène
+        # self.view = scene.views()[0]  # Obtenez la vue associée à la scène
 
 
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         if event.button() == Qt.RightButton:
          
-            details_dialog = MaFenetreSecondaire(self)
-            details_dialog.exec_()
+            # details_dialog = MaFenetreSecondaire(self)
+            # details_dialog.exec_()
+
+            self.details_dialog = MaFenetreSecondaire(self)
+            self.details_dialog.show() 
 
         elif event.button() == Qt.LeftButton:
             # Left mouse button is pressed
@@ -183,17 +203,17 @@ class VehiculeItem(QGraphicsPolygonItem):
         #print(self.drone.target)
 
     def update_drone_color(self):
-        color_name = MaFenetreSecondaire.color_combobox.currentText()
-        color_dict = {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta}
-        self.setBrush(QBrush(color_dict.get(color_name, Qt.red)))
+        color_name = self.details_dialog.color_combobox.currentText()
+        # color_name = MaFenetreSecondaire.color_combobox.currentText()
+        color_dict = {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta, 'Cyan':Qt.cyan}
+        self.setBrush(QBrush(color_dict.get(color_name, Qt.cyan)))
+        self.setPen(QPen(color_dict.get(color_name, Qt.cyan)))
 
-    def update_drone_ID(self):
-        self.drone.ID = MaFenetreSecondaire.name_line_edit.selectionChanged
+    # def update_drone_ID(self):
+    #     self.drone.ID = MaFenetreSecondaire.name_line_edit.selectionChanged
 
     def update_drone_ID(self, new_text):
         self.drone.ID = new_text
-
-
 
 
 class MaFenetreSecondaire(QDialog):
@@ -205,23 +225,19 @@ class MaFenetreSecondaire(QDialog):
 
         # label avec le nom du drone
         name_label = QLabel(f"Drone ID: {VehiculeItem.drone.ID}")
-
-        # self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
-        # self.name_line_edit.selectionChanged.connect(VehiculeItem.update_drone_ID)
-
+        # Permet de changer l'ID du drone
         self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
         self.name_line_edit.textChanged.connect(VehiculeItem.update_drone_ID)
-
 
         
         # Menu déroulant avec la couleur
         self.color_combobox = QComboBox()
-        self.color_combobox.addItems(['Red', 'Green', 'Blue', 'Yellow', 'Purple'])
+        self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
         self.color_combobox.setCurrentIndex(0)
         self.color_combobox.currentIndexChanged.connect(VehiculeItem.update_drone_color)
        
 
-        # Ok button
+        #boutton ok
         ok_button = QPushButton("OK")
         ok_button.clicked.connect(self.accept)
 
@@ -290,13 +306,27 @@ class GoalItem(QGraphicsPolygonItem):
 
 
 class ZoomButtonP(QPushButton):
-    def __init__(self, icon_path, zoom_factor, *args, **kwargs):
+    def __init__(self, icon_path, zoom_factor, main_window , *args, **kwargs):
         super(ZoomButtonP, self).__init__(*args, **kwargs)
         self.zoom_factor = zoom_factor
+        self.main_window = main_window
         self.setIcon(QIcon(icon_path))
         self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
-        self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
+        # self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
 
+        self.clicked.connect(lambda : self.main_window.zoom(self.zoom_factor))
+
+
+class ZoomButtonN(QPushButton):
+    def __init__(self, icon_path2, zoom_factor, main_window , *args, **kwargs):
+        super(ZoomButtonN, self).__init__(*args, **kwargs)
+        self.zoom_factor = zoom_factor
+        self.main_window = main_window
+        self.setIcon(QIcon(icon_path2))
+        self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
+        # self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
+
+        self.clicked.connect(lambda : self.main_window.zoom(self.zoom_factor))
 
         
 
@@ -305,7 +335,7 @@ class TriangleWidget(QPushButton):
         super(TriangleWidget, self,).__init__()
         self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
         self.clicked.connect(self.main_window.ajoute_drone)  # Connectez le clic à la méthode de la fenêtre principale
-        self.setGeometry(0, 0, 100, 100)  # Ajustez la taille 
+        self.setFixedSize(50, 50)  # Ajustez la taille 
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -328,26 +358,32 @@ class HexagonWidget(QPushButton):
         super(HexagonWidget, self).__init__()
         self.main_window = main_window  
         self.clicked.connect(self.main_window.ajoute_buildinghexa)  
-        self.setGeometry(0, 0, 50, 50)  
+        self.setFixedSize(50, 50)  
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
+
+        # Define the points of the regular hexagon
+        side_length = self.width() / 2
+        apothem = side_length * math.sqrt(3) / 2
+
         # Define the points of the hexagon
         points = [
-            QPointF(0, self.height()),
-            QPointF(self.width() / 4, 0),
-            QPointF(3 * self.width() / 4, 0),
-            QPointF(self.width(), self.height()),
-            QPointF(3 * self.width() / 4, 2 * self.height()),
-            QPointF(self.width() / 4, 2 * self.height())
+            QPointF(self.width() / 2, 0),
+            QPointF(self.width(), apothem),
+            QPointF(self.width(), apothem + side_length),
+            QPointF(self.width() / 2, 2 * apothem + side_length),
+            QPointF(0, apothem + side_length),
+            QPointF(0, apothem)
         ]
 
        
         hexagon_polygon = QPolygonF(points)
 
-    
+
+
         painter.setBrush(QBrush(Qt.red))
         painter.setPen(QPen(Qt.black))
         painter.drawPolygon(hexagon_polygon)
@@ -358,7 +394,7 @@ class CarreeWidget(QPushButton):
         super(CarreeWidget, self).__init__()
         self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
         self.clicked.connect(self.main_window.ajoute_buildingcarre)  # Connectez le clic à la méthode de la fenêtre principale
-        self.setGeometry(0, 0, 50, 50)  # taille du widget
+        self.setFixedSize(50, 50)  # taille du widget
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -384,13 +420,14 @@ class MaFenetrePrincipale(QMainWindow):
         self.vue = QGraphicsView(self.scene)
         self.vue.scale(1, -1)
         self.vue.fitInView(self.scene.itemsBoundingRect(), Qt.KeepAspectRatio) 
-        self.button_jason = QPushButton('créer Jason')       
+        self.button_jason = QPushButton('créer Jason')
+        self.jflow_button = QPushButton('lancer jflow')      
         # Créer un layout principal
         mainlayout = QHBoxLayout()
 
         # Ajouter layout1 à gauche
-        layout1 = self.create_layout1()  # Vous devriez implémenter votre propre fonction pour créer layout1
-        mainlayout.addLayout(layout1)
+        layoutLeft = self.create_layoutLeft()  # Vous devriez implémenter votre propre fonction pour créer layout1
+        mainlayout.addLayout(layoutLeft)
 
         # Ajouter la scène graphique à droite
         mainlayout.addWidget(self.vue)
@@ -404,42 +441,98 @@ class MaFenetrePrincipale(QMainWindow):
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
         self.model = tojason.Modele()
         self.button_jason.clicked.connect(self.creer_json)
-
+        # self.jflow_button.clicked.connect(subprocess.run["main_gflow.py"])
+        # self.jflow_button.clicked.connect(subprocess.run["main_gflow.py"])
 
         self.show()
 
-    def create_layout1(self):
-        layout1 = QVBoxLayout()
+    def create_layoutLeft(self):
+        LayoutLeft = QVBoxLayout()
 
         # Ajoutez des widgets à la mise en page
         # label_info = QLabel("Informations personnalisées")
         # layout1.addWidget(label_info)
 
-       # Ajouter le triangle à votre layout personnalisé
+        h1_layout = QHBoxLayout()
+        h2_layout = QHBoxLayout()
+        h3_layout = QHBoxLayout()
+        h4_layout = QHBoxLayout()
+
+        spacer_left = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer_right = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        # ajouter espace extensible gauche
+        h1_layout.addItem(spacer_left)
+        # Ajouter le widget au centre (par exemple, un bouton)
+        label_triangle = QLabel ('ajouter un drone')
         triangle_widget = TriangleWidget(self)
-        layout1.addWidget(triangle_widget)
+        h1_layout.addWidget(triangle_widget)
+        h1_layout.addWidget(label_triangle)
+        # Ajouter un espace extensible droite
+        h1_layout.addItem(spacer_right)
 
+        
+        LayoutLeft.addLayout(h1_layout)
 
+    #    # Ajouter le triangle à votre layout personnalisé
+    #     label_triangle = QLabel ('ajouter un drone')
+    #     triangle_widget = TriangleWidget(self)
+    #     LayoutLeft.addWidget(triangle_widget)
+        
+    #     LayoutLeft.addWidget(label_triangle)
 
+        # spacer1 = QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        # spacer2 = QSpacerItem(40,40,QSizePolicy.Minimum, QSizePolicy.Expanding)
+        # LayoutLeft.addItem(spacer1)
+
+        # ajouter espace à gauche
+        h2_layout.addItem(spacer_left)
         # Ajouter le carree à notre layout 
+        label_carree = QLabel ('ajouter un building carré')
         carree_widget = CarreeWidget(self)
-        layout1.addWidget(carree_widget)
+        h2_layout.addWidget(carree_widget)
+        h2_layout.addWidget(label_carree)
+        # ajouter espace à droite
+        h2_layout.addItem(spacer_right)
 
+        LayoutLeft.addLayout(h2_layout)
+
+        
+
+        
+        # ajouter espace à gauche
+        h3_layout.addItem(spacer_left)
         # Ajouter l'hexagone a notre layout
+        label_hexa = QLabel ('ajouter un building hexagonal')
         hexa_widget = HexagonWidget(self)
-        layout1.addWidget(hexa_widget)
+        h3_layout.addWidget(hexa_widget)
+        h3_layout.addWidget(label_hexa)
+        # ajouter espace à droite
+        h3_layout.addItem(spacer_right)
+        
+        LayoutLeft.addLayout(h3_layout)
+        
 
         #  # Ajouter des boutons de zoom à votre layout personnalisé
-        zoom_in_button = ZoomButtonP('ZoomButtonP.png', 2.0, 'Zoom In')
-        # zoom_out_button = ZoomButton('zoom_out_icon.png', 0.5, 'Zoom Out')
-        layout1.addWidget(zoom_in_button)
-        # layout1.addWidget(zoom_out_button)
-    
+        zoom_in_button = ZoomButtonP('ZoomButtonP.jpg', 2 , self ,'Zoom In')
+        zoom_out_button = ZoomButtonN('ZoomButtonN.jpg', 0.5, self , 'Zoom Out')
+        LayoutLeft.addWidget(zoom_in_button)
+        LayoutLeft.addWidget(zoom_out_button)
+
+     
+        # boutton jason
+        LayoutLeft.addWidget(self.button_jason)
+
+  
+
+        # boutton Jflow
+        jflow_button = QPushButton('lacer jflow')
+        LayoutLeft.addWidget (self.jflow_button)
         
-        layout1.addWidget(self.button_jason)
+        
         # self.button_jason.clicked.connect(self.creer_json)
 
-        return layout1
+        return LayoutLeft
 
     def zoom(self, facteur):
         echelle_actuelle = self.vue.transform().m11()
