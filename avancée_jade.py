@@ -430,6 +430,8 @@ class MaFenetrePrincipale(QMainWindow):
 
         self.gflow_button.clicked.connect(opengflow)
 
+        self.liste_vehicle_item = {}
+
         self.show()
 
 
@@ -507,6 +509,11 @@ class MaFenetrePrincipale(QMainWindow):
         #    self.model.drone[0].position=(pos_x,pos_y,pos_z) 
         #    print(AC_ID, pos_x, pos_y)
 
+        item_drone = self.liste_vehicle_item[AC_ID]
+        modele_drone = item_drone.drone
+        modele_drone.position=(pos_x,pos_y,pos_z)
+        item_drone.update_position()
+
         for drone in Modele.drone:
             if drone.id == AC_ID:
                 drone.position=(pos_x,pos_y,pos_z)
@@ -522,6 +529,9 @@ class MaFenetrePrincipale(QMainWindow):
         goalItem = GoalItem(drone)
         self.scene.addItem(droneItem)
         self.scene.addItem(goalItem)
+
+        #stocker dans le dictionnaire
+        self.liste_vehicle_item[drone.ID] = droneItem
     
     def ajoute_buildingcarre(self):
         vertices=[[0,0,151.5],[0,60.5,151.5],[60.50,60.5,151.5],[60.5,0,151.5]]
