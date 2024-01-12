@@ -33,7 +33,7 @@ class MaSceneGraphique(QGraphicsScene):
         image_size = 800
 
         # Charger l'image et redimensionner
-        image_path = 'grille.png'
+        image_path = 'grilleflipped.jpg'
 
         
 
@@ -421,7 +421,7 @@ class MaFenetrePrincipale(QMainWindow):
         self.vue.scale(1, -1)
         self.vue.fitInView(self.scene.itemsBoundingRect(), Qt.KeepAspectRatio) 
         self.button_jason = QPushButton('créer Jason')
-        self.jflow_button = QPushButton('lancer jflow')      
+        self.gflow_button = QPushButton('lancer gflow')        
         # Créer un layout principal
         mainlayout = QHBoxLayout()
 
@@ -443,6 +443,15 @@ class MaFenetrePrincipale(QMainWindow):
         self.button_jason.clicked.connect(self.creer_json)
         # self.jflow_button.clicked.connect(subprocess.run["main_gflow.py"])
         # self.jflow_button.clicked.connect(subprocess.run["main_gflow.py"])
+        gflow = "main_gflow.py"
+        def opengflow():
+            with open(gflow,"r") as file:
+                gflowgo=file.read() 
+            exec(gflowgo)
+
+        self.gflow_button.clicked.connect(opengflow)
+
+        self.show()
 
         self.show()
 
@@ -526,8 +535,8 @@ class MaFenetrePrincipale(QMainWindow):
   
 
         # boutton Jflow
-        jflow_button = QPushButton('lacer jflow')
-        LayoutLeft.addWidget (self.jflow_button)
+        gflow_button = QPushButton('lacer jflow')
+        LayoutLeft.addWidget (self.gflow_button)
         
         
         # self.button_jason.clicked.connect(self.creer_json)
@@ -537,8 +546,11 @@ class MaFenetrePrincipale(QMainWindow):
     def zoom(self, facteur):
         echelle_actuelle = self.vue.transform().m11()
         nouvelle_echelle = echelle_actuelle * facteur
-        self.vue.setTransform(QTransform().scale(nouvelle_echelle, nouvelle_echelle))
-
+        self.vue.setTransform(QTransform().translate(self.vue.viewport().width() / 2, self.vue.viewport().height() / 2).scale(nouvelle_echelle, -nouvelle_echelle))
+    def zoom_out(self, facteur):
+        echelle_actuelle = self.vue.transform().m11()
+        nouvelle_echelle = echelle_actuelle * facteur
+        self.vue.setTrans
 
     def creer_json(self):
         modele = Modele
@@ -617,3 +629,4 @@ Lbuild=[]
 Lvehic=[]
 
  
+
