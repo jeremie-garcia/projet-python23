@@ -136,12 +136,12 @@ class VehiculeItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.position[0]
-        self.y1= vehicule.position[1]
-        self.x2= vehicule.position[0] - 25
-        self.y2= vehicule.position[1] - 50
-        self.x3= vehicule.position[0] - 50
-        self.y3=vehicule.position[1]
+        self.x1= vehicule.position[0] + 25
+        self.y1= vehicule.position[1] + 25
+        self.x2= vehicule.position[0] 
+        self.y2= vehicule.position[1] - 25
+        self.x3= vehicule.position[0] - 25
+        self.y3=vehicule.position[1] + 25
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
                         QPointF(self.x2, self.y2 ),
@@ -256,12 +256,12 @@ class GoalItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.goal[0]
-        self.y1= vehicule.goal[1]
-        self.x2= vehicule.goal[0] - 25
-        self.y2= vehicule.goal[1] - 50
-        self.x3= vehicule.goal[0] - 50
-        self.y3=vehicule.goal[1]
+        self.x1= vehicule.position[0] + 25
+        self.y1= vehicule.position[1] + 25
+        self.x2= vehicule.position[0] 
+        self.y2= vehicule.position[1] - 25
+        self.x3= vehicule.position[0] - 25
+        self.y3=vehicule.position[1] + 25
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
                         QPointF(self.x2, self.y2 ),
