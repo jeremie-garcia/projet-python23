@@ -1,12 +1,13 @@
 import sys
-from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QSpacerItem, QSizePolicy, QComboBox, QDialog, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider,QGraphicsRectItem, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
-from PyQt5.QtGui import QPolygonF, QBrush, QPen,QFont,QPixmap,QTransform, QPainter, QIcon 
-from PyQt5.QtCore import Qt, QPointF,QRectF, QSize
+from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QSpacerItem, QSizePolicy, QComboBox, QDialog, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
+from PyQt5.QtGui import QPolygonF, QBrush, QPen,QPixmap,QTransform, QPainter, QIcon 
+from PyQt5.QtCore import Qt, QPointF, QSize
 import classmodel_tojson as tojason
 from drone_monitoring import ClientVoliere
-import subprocess
 import math
-#from PIL import Image
+from gflow.utils.plot_utils import PlotTrajectories
+from gflow.cases import Cases
+from gflow.utils.simulation_utils import run_simulation
 
 
 
@@ -14,11 +15,6 @@ Modele=tojason.Modele()
 
 ang_drone=180
 ang_goal=180
-source_strength=0.5
-imag_source_strength=0.5
-sink_strength=5
-safety=0.0001
-
 
 
 class ImageGridItem(QGraphicsPixmapItem):
@@ -89,13 +85,13 @@ class ObstacleItem(QGraphicsPolygonItem):
         # print("move",event.scenePos())
         self.newx=event.scenePos().x()                                #je recupere la position de la souris
         self.newy=event.scenePos().y()
-        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+        
         self.update_position()
         
     def update_position(self):
         #self.setRotation(self.drone.orient)
         nbs_sommets=len(self.building.vertices)
-        if nbs_sommets == 4: # calcul des coordonées en fonctions de carré ou hexa
+        if nbs_sommets == 4:                            # calcul des coordonées en fonctions de carré ou hexa
             self.building.vertices[0][0]= self.newx
             self.building.vertices[0][1]= self.newy 
             self.building.vertices[1][0]= self.newx
@@ -114,20 +110,6 @@ class ObstacleItem(QGraphicsPolygonItem):
 
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le building dans l'interface
         #print(self.building.vertices)
-
-
-## Anglais Aviation Issues:
-        # He has the order to hold the point 
-        # Horever, the red light wich tells you to hold the point was active
-        # Maybe he didn't see the line
-
-
-        # polution can apply to noise + light
-        # strike = collision , for example : bird strike
-        # la piste en parlant du sol , tarmac, aspehlt
-        # go around = missed approach could be done by purpose (if A350 has seen the Dash 8)
-
-
 
 
 
@@ -216,41 +198,7 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.drone.ID = new_text
 
 
-class MaFenetreSecondaire(QDialog):
-    def __init__(self, VehiculeItem):
-        super(MaFenetreSecondaire, self).__init__()
 
-        self.setWindowTitle("Drone Details")
-        self.setGeometry(100, 100, 300, 150)
-
-        # label avec le nom du drone
-        name_label = QLabel(f"Drone ID: {VehiculeItem.drone.ID}")
-        # Permet de changer l'ID du drone
-        self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
-        self.name_line_edit.textChanged.connect(VehiculeItem.update_drone_ID)
-
-        
-        # Menu déroulant avec la couleur
-        self.color_combobox = QComboBox()
-        self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
-        self.color_combobox.setCurrentIndex(0)
-        self.color_combobox.currentIndexChanged.connect(VehiculeItem.update_drone_color)
-       
-
-        #boutton ok
-        ok_button = QPushButton("OK")
-        ok_button.clicked.connect(self.accept)
-
-       # mets en place les layouts
-        layout = QVBoxLayout()
-        layout.addWidget(name_label)
-        layout.addWidget(self.name_line_edit)
-        layout.addWidget(self.color_combobox)
-        layout.addWidget(ok_button)
-        
-        # Initialisation classique
-        self.setLayout(layout)   
-        self.show()
 
 class GoalItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
@@ -298,10 +246,6 @@ class GoalItem(QGraphicsPolygonItem):
 
         self.setPos(QPointF(self.newx, self.newy))                  
         #print(self.drone.goal)
-    
-
-
-
 
 
 
@@ -382,8 +326,6 @@ class HexagonWidget(QPushButton):
        
         hexagon_polygon = QPolygonF(points)
 
-
-
         painter.setBrush(QBrush(Qt.red))
         painter.setPen(QPen(Qt.black))
         painter.drawPolygon(hexagon_polygon)
@@ -410,6 +352,44 @@ class CarreeWidget(QPushButton):
         painter.setBrush(QBrush(Qt.red))
         painter.setPen(QPen(Qt.black))
         painter.drawPolygon(carree_polygon)
+
+
+
+class MaFenetreSecondaire(QDialog):
+    def __init__(self, VehiculeItem):
+        super(MaFenetreSecondaire, self).__init__()
+
+        self.setWindowTitle("Drone Details")
+        self.setGeometry(100, 100, 300, 150)
+
+        # label avec le nom du drone
+        name_label = QLabel(f"Drone ID: {VehiculeItem.drone.ID}")
+        # Permet de changer l'ID du drone
+        self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
+        self.name_line_edit.textChanged.connect(VehiculeItem.update_drone_ID)
+
+        
+        # Menu déroulant avec la couleur
+        self.color_combobox = QComboBox()
+        self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
+        self.color_combobox.setCurrentIndex(0)
+        self.color_combobox.currentIndexChanged.connect(VehiculeItem.update_drone_color)
+       
+
+        #boutton ok
+        ok_button = QPushButton("OK")
+        ok_button.clicked.connect(self.accept)
+
+       # mets en place les layouts
+        layout = QVBoxLayout()
+        layout.addWidget(name_label)
+        layout.addWidget(self.name_line_edit)
+        layout.addWidget(self.color_combobox)
+        layout.addWidget(ok_button)
+        
+        # Initialisation classique
+        self.setLayout(layout)   
+        self.show()
 
 
 class MaFenetrePrincipale(QMainWindow):
@@ -444,15 +424,9 @@ class MaFenetrePrincipale(QMainWindow):
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
         self.model = tojason.Modele()
         self.button_jason.clicked.connect(self.creer_json)
-        # self.jflow_button.clicked.connect(subprocess.run["main_gflow.py"])
-        # self.jflow_button.clicked.connect(subprocess.run["main_gflow.py"])
-        gflow = "main_gflow.py"
-        def opengflow():
-            with open(gflow,"r") as file:
-                gflowgo=file.read() 
-            exec(gflowgo)
 
-        self.gflow_button.clicked.connect(opengflow)
+
+        self.gflow_button.clicked.connect(gflow)
 
         self.liste_vehicle_item = {}
 
@@ -463,8 +437,6 @@ class MaFenetrePrincipale(QMainWindow):
         LayoutLeft = QVBoxLayout()
 
         # Ajoutez des widgets à la mise en page
-        # label_info = QLabel("Informations personnalisées")
-        # layout1.addWidget(label_info)
 
         h1_layout = QHBoxLayout()
         h2_layout = QHBoxLayout()
@@ -483,20 +455,8 @@ class MaFenetrePrincipale(QMainWindow):
         h1_layout.addWidget(label_triangle)
         # Ajouter un espace extensible droite
         h1_layout.addItem(spacer_right)
-
-        
+  
         LayoutLeft.addLayout(h1_layout)
-
-    #    # Ajouter le triangle à votre layout personnalisé
-    #     label_triangle = QLabel ('ajouter un drone')
-    #     triangle_widget = TriangleWidget(self)
-    #     LayoutLeft.addWidget(triangle_widget)
-        
-    #     LayoutLeft.addWidget(label_triangle)
-
-        # spacer1 = QSpacerItem(10, 10, QSizePolicy.Minimum, QSizePolicy.Expanding)
-        # spacer2 = QSpacerItem(40,40,QSizePolicy.Minimum, QSizePolicy.Expanding)
-        # LayoutLeft.addItem(spacer1)
 
         # ajouter espace à gauche
         h2_layout.addItem(spacer_left)
@@ -571,7 +531,7 @@ class MaFenetrePrincipale(QMainWindow):
 
     def ajoute_drone(self):
         #creer un drone
-        drone = tojason.Drone(str(self.drone_index), [0,0,0],[0,0,0], ang_drone, source_strength, imag_source_strength, sink_strength, safety)
+        drone = tojason.Drone(str(self.drone_index), [0,0,0],[0,0,0], ang_drone)
         self.model.add_drone(drone)
 
         droneItem = VehiculeItem(drone)
@@ -602,8 +562,26 @@ class MaFenetrePrincipale(QMainWindow):
         buildingItem = ObstacleItem(building)
         self.scene.addItem(buildingItem)
 
+
+def gflow():
+    file_name = "data.json"
+    case_name = "fichier jason"
+
+    case = Cases.get_case(file_name=file_name, case_name=case_name)
+
+    run_simulation(
+        case,
+        t=2000,  # maximum number of timesteps
+        update_every=1,  # leave as 1
+        stop_at_collision=False,  # leave as False
+        max_avoidance_distance=999999,  # larger than simulation domain
+    )
+
+    trajectory_plot = PlotTrajectories(case, update_every=1)
+    trajectory_plot.show()
+
      
-def main():
+if __name__ == '__main__':
     app = QApplication(sys.argv)
     print("c tout bon")
     scene = MaSceneGraphique()
@@ -625,14 +603,3 @@ def main():
 
     
     sys.exit(app.exec_())
-
-
-if __name__ == '__main__':
-    main()
-
-
-
-Lbuild=[]
-Lvehic=[]
-
- 
