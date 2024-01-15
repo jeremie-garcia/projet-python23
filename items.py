@@ -1,3 +1,4 @@
+
 from PyQt5.QtWidgets import QGraphicsSceneMouseEvent,  QGraphicsPolygonItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen 
 from PyQt5.QtCore import Qt, QPointF
@@ -6,31 +7,29 @@ import maindrone
 import fenetres
 
 
-class ObstacleItem(QGraphicsPolygonItem):
+class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles 
     def __init__(self,building):
 
         self.building = building
         self.polygonpoints=[]
         #pour chaque vertices (x,y,z) je cree un point QTpointf et j'ajoute dans la liste
         for vertice in building.vertices:
-            self.polygonpoints.append(QPointF(vertice[0],vertice[1]))
+            self.polygonpoints.append(QPointF(vertice[0],vertice[1]))       
             
 
-        self.polygone = self.polygone = QPolygonF( self.polygonpoints )
+        self.polygone = QPolygonF( self.polygonpoints )         #défini le polygone avec ses points
         
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
         
-        #self.setRotation(self.drone.orient)
-        self.setBrush(QBrush(Qt.red))
+        self.setBrush(QBrush(Qt.red))                        #le dessine
         self.setPen(QPen(Qt.red))
-        maindrone.Modele.add_building(self.building)
+        maindrone.Modele.add_building(self.building)          #l'ajoute au modèle
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         print("press", event)
     
     def mouseMoveEvent(self, event):
         #quand on bouge alors on change la position du drone
-        # print("move",event.scenePos())
         self.newx=event.scenePos().x()                                #je recupere la position de la souris
         self.newy=event.scenePos().y()
         
@@ -40,7 +39,7 @@ class ObstacleItem(QGraphicsPolygonItem):
         #self.setRotation(self.drone.orient)
         nbs_sommets=len(self.building.vertices)
         if nbs_sommets == 4:                            # calcul des coordonées en fonctions de carré ou hexa
-            self.building.vertices[0][0]= self.newx
+            self.building.vertices[0][0]= self.newx          
             self.building.vertices[0][1]= self.newy 
             self.building.vertices[1][0]= self.newx
             self.building.vertices[1][1]= self.newy +60 
@@ -66,7 +65,7 @@ class VehiculeItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.position[0] + 25
+        self.x1= vehicule.position[0] + 25            #je défini les points du triangle, centré
         self.y1= vehicule.position[1] + 25
         self.x2= vehicule.position[0] 
         self.y2= vehicule.position[1] - 25
@@ -134,13 +133,10 @@ class VehiculeItem(QGraphicsPolygonItem):
 
     def update_drone_color(self):
         color_name = self.details_dialog.color_combobox.currentText()
-        # color_name = MaFenetreSecondaire.color_combobox.currentText()
-        color_dict = {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta, 'Cyan':Qt.cyan}
+        color_dict = {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Magenta': Qt.magenta, 'Cyan':Qt.cyan}
         self.setBrush(QBrush(color_dict.get(color_name, Qt.cyan)))
         self.setPen(QPen(color_dict.get(color_name, Qt.cyan)))
 
-    # def update_drone_ID(self):
-    #     self.drone.ID = MaFenetreSecondaire.name_line_edit.selectionChanged
 
     def update_drone_ID(self, new_text):
         self.drone.ID = new_text
@@ -150,7 +146,7 @@ class GoalItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.position[0] + 25
+        self.x1= vehicule.position[0] + 25        #points du triangle pour la cible
         self.y1= vehicule.position[1] + 25
         self.x2= vehicule.position[0] 
         self.y2= vehicule.position[1] - 25
