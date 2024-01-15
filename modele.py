@@ -37,8 +37,5 @@ class Modele:
         
 # Exemple :
 ex= Modele()
-ex.add_building(Building('Building1',[[0.29, -0.40, 1.2],[-0.29, -0.40, 1.2],[-0.47, 0.15, 1.2],[0, 0.5, 1.2]]))
-ex.add_building(Building('Building2', [[0.58, -5.4, 1.2],[-0.58, -1.39,1.2],[-0.59, -0.25, 1.2],[-0.58, 0.22, 1.2]]))
-ex.add_drone(Drone('Drone1', [0, 0, 0], [1, 1, 1],0, 0.5, 0.5, 5, 0.0001))
-ex.add_drone(Drone('Drone2', [0, 0, 0], [1, 1, 1],0, 0.5, 0.5, 5, 0.0001))
+
 Modele.json(ex,'fichierjson')
