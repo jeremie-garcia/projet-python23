@@ -14,7 +14,7 @@ Modele=modele.Modele()
      
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    print("c tout bon")
+    print("lancement du programme")
     scene = scenegraphique.MaSceneGraphique()
     
     # Crée la vue graphique directement
