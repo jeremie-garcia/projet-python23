@@ -1,9 +1,8 @@
-
 from PyQt5.QtWidgets import QGraphicsSceneMouseEvent,  QGraphicsPolygonItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen 
 from PyQt5.QtCore import Qt, QPointF
 import math
-import main
+import maindrone
 import fenetres
 
 
@@ -24,7 +23,7 @@ class ObstacleItem(QGraphicsPolygonItem):
         #self.setRotation(self.drone.orient)
         self.setBrush(QBrush(Qt.red))
         self.setPen(QPen(Qt.red))
-        main.Modele.add_building(self.building)
+        maindrone.Modele.add_building(self.building)
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         print("press", event)
@@ -84,7 +83,7 @@ class VehiculeItem(QGraphicsPolygonItem):
         self.setRotation(self.drone.orientation)
         self.setBrush(QBrush(Qt.cyan))
         self.setPen(QPen(Qt.cyan))
-        main.Modele.add_drone(self.drone)
+        maindrone.Modele.add_drone(self.drone)
         # self.scene = scene  # Ajoutez une référence à la scène
         # self.view = scene.views()[0]  # Obtenez la vue associée à la scène
 
