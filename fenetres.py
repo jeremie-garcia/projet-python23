@@ -1,3 +1,4 @@
+
 from PyQt5.QtWidgets import  QSpacerItem, QSizePolicy, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QGraphicsView, QMainWindow, QPushButton, QDialog, QComboBox
 from PyQt5.QtGui import QTransform
 from PyQt5.QtCore import Qt
@@ -155,7 +156,7 @@ class MaFenetrePrincipale(QMainWindow):
 
 
     def ajoute_drone(self):
-        #creer un drone
+        #creer un drone au centre
         drone = modele.Drone(str(self.drone_index), [0,0,0],[0,0,0], ang_drone)
         self.model.add_drone(drone)
 
@@ -169,8 +170,11 @@ class MaFenetrePrincipale(QMainWindow):
 
         #change le nom pour le prochain drone
         self.drone_index+=1
+
+
     
     def ajoute_buildingcarre(self):
+        # créer un batiment carré au centre
         vertices=[[0,0,151.5],[0,60.5,151.5],[60.50,60.5,151.5],[60.5,0,151.5]]
         building = modele.Building("OBScarré",vertices)
         self.model.add_building(building)
@@ -180,6 +184,7 @@ class MaFenetrePrincipale(QMainWindow):
 
 
     def ajoute_buildinghexa(self):
+        # créer un batiment hexagonal au centre
         vertices=[[60,0,151.5],[30,51.96,151.5],[-30,51.96,151.5],[-60,0,151.5],[-30,-51.96,151.5],[30,-51.96,151.5]]
         building = modele.Building("OBShexa",vertices)
         self.model.add_building(building)
@@ -189,8 +194,7 @@ class MaFenetrePrincipale(QMainWindow):
 
 
 
-
-def gflow():
+def gflow():                           # on a reprit votre fichier main_gflow 
     file_name = "data.json"
     case_name = "fichierjson"
 
