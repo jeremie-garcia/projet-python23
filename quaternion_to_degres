@@ -1,6 +1,6 @@
 import numpy as np
 
-def quaternion_to_euler_xyz(quat):
+def quaternion_to_euler(quat):
     # Normaliser le quaternion
     quat= quat/ np.linalg.norm(quat)
     a=quat[0]
@@ -11,4 +11,4 @@ def quaternion_to_euler_xyz(quat):
     yaw_deg = np.degrees(yaw)
     return yaw_deg
 
-angle_drone= quaternion_to_euler_xyz(quat)
+angle_drone= quaternion_to_euler(quat)
