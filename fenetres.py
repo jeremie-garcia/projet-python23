@@ -1,5 +1,4 @@
-
-from PyQt5.QtWidgets import  QSpacerItem, QSizePolicy, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QSlider, QApplication,QApplication, QGraphicsScene, QGraphicsSceneMouseEvent, QGraphicsView, QMainWindow, QPushButton, QToolBar, QGraphicsRectItem, QGraphicsPolygonItem,QToolBar,QGraphicsItem
+from PyQt5.QtWidgets import  QSpacerItem, QSizePolicy, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QGraphicsView, QMainWindow, QPushButton, QDialog, QComboBox
 from PyQt5.QtGui import QTransform
 from PyQt5.QtCore import Qt
 from gflow.utils.plot_utils import PlotTrajectories
@@ -9,7 +8,7 @@ import scenegraphique
 import modele
 import boutons
 import items
-import main
+import maindrone
 
 
 
@@ -29,7 +28,7 @@ class MaFenetrePrincipale(QMainWindow):
 
         self.drone_index=60
 
-        self.button_jason = QPushButton('créer Jason')
+        self.button_json = QPushButton('créer json')
         self.gflow_button = QPushButton('lancer gflow')        
         # Créer un layout principal
         mainlayout = QHBoxLayout()
@@ -49,7 +48,7 @@ class MaFenetrePrincipale(QMainWindow):
         self.setGeometry(100, 100, 800, 600)
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
         self.model = modele.Modele()
-        self.button_jason.clicked.connect(self.creer_json)
+        self.button_json.clicked.connect(self.creer_json)
 
 
         self.gflow_button.clicked.connect(gflow)
@@ -119,8 +118,8 @@ class MaFenetrePrincipale(QMainWindow):
         LayoutLeft.addWidget(zoom_out_button)
 
      
-        # boutton jason
-        LayoutLeft.addWidget(self.button_jason)
+        # boutton json
+        LayoutLeft.addWidget(self.button_json)
 
   
 
@@ -129,7 +128,7 @@ class MaFenetrePrincipale(QMainWindow):
         LayoutLeft.addWidget (self.gflow_button)
         
         
-        # self.button_jason.clicked.connect(self.creer_json)
+        # self.button_json.clicked.connect(self.creer_json)
 
         return LayoutLeft
 
@@ -143,8 +142,8 @@ class MaFenetrePrincipale(QMainWindow):
         self.vue.setTrans
 
     def creer_json(self):
-        modele = main.Modele
-        modele.json('fichier jason')
+        modele = maindrone.Modele
+        modele.json('fichierjson')
 
         
     def update_drone_data(self, AC_ID, pos_x, pos_y,pos_z, quat_a, quat_b, quat_c, quat_d):
@@ -189,9 +188,11 @@ class MaFenetrePrincipale(QMainWindow):
         self.scene.addItem(buildingItem)
 
 
+
+
 def gflow():
     file_name = "data.json"
-    case_name = "fichier jason"
+    case_name = "fichierjson"
 
     case = Cases.get_case(file_name=file_name, case_name=case_name)
 
