@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import QGraphicsPixmapItem, QGraphicsScene, QGraphicsScene
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
