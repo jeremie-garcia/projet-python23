@@ -3,6 +3,8 @@ from PyQt5.QtWidgets import  QApplication,QApplication
 import modele
 import math
 import scenegraphique
+import drone_monitoring
+import fenetres
 
 
 
@@ -20,8 +22,8 @@ if __name__ == '__main__':
     #view.show()
 
 
-    voliere = ClientVoliere()
-    fenetre = MaFenetrePrincipale()
+    voliere = drone_monitoring.ClientVoliere()
+    fenetre = fenetres.MaFenetrePrincipale()
 
 
     voliere.drone_data.connect(fenetre.update_drone_data)
