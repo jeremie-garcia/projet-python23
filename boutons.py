@@ -29,9 +29,9 @@ class ZoomButtonN(QPushButton):
 
         
 
-class TriangleWidget(QPushButton):
+class TriangleBouton(QPushButton):
     def __init__(self, main_window):
-        super(TriangleWidget, self,).__init__()
+        super(TriangleBouton, self,).__init__()
         self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
         self.clicked.connect(self.main_window.ajoute_drone)  # Connectez le clic à la méthode de la fenêtre principale
         self.setFixedSize(50, 50)  # Ajustez la taille 
@@ -52,9 +52,9 @@ class TriangleWidget(QPushButton):
         painter.drawPolygon(triangle_polygon)
 
 
-class HexagonWidget(QPushButton):
+class HexagonBouton(QPushButton):
     def __init__(self, main_window):
-        super(HexagonWidget, self).__init__()
+        super(HexagonBouton, self).__init__()
         self.main_window = main_window  
         self.clicked.connect(self.main_window.ajoute_buildinghexa)  
         self.setFixedSize(50, 50)  
@@ -86,9 +86,9 @@ class HexagonWidget(QPushButton):
         painter.drawPolygon(hexagon_polygon)
 
 
-class CarreeWidget(QPushButton):
+class CarreeBouton(QPushButton):
     def __init__(self, main_window):
-        super(CarreeWidget, self).__init__()
+        super(CarreeBouton, self).__init__()
         self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
         self.clicked.connect(self.main_window.ajoute_buildingcarre)  # Connectez le clic à la méthode de la fenêtre principale
         self.setFixedSize(50, 50)  # taille du widget
