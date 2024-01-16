@@ -139,6 +139,8 @@ class MaFenetrePrincipale(QMainWindow):
         echelle_actuelle = self.vue.transform().m11() # echelle de la vue actuelle 
         nouvelle_echelle = echelle_actuelle * facteur # multiplie par un facteur de zoom 
         # permet de conserver l'invertion de l'axe y avec comme point d'ancrage le centre de la volière 
+        #déplace le centre de la vue vers le centre de la fenêtre.
+        # applique la nouvelle échelle avec facteur negatif sur le y pour l'inversion
         self.vue.setTransform(QTransform().translate(self.vue.viewport().width() / 2, self.vue.viewport().height() / 2).scale(nouvelle_echelle, -nouvelle_echelle))
     def zoom_out(self, facteur):
         echelle_actuelle = self.vue.transform().m11()
