@@ -159,11 +159,9 @@ class MaFenetrePrincipale(QMainWindow):
     def update_drone_data(self, AC_ID, pos_x, pos_y,pos_z, quat_a, quat_b, quat_c, quat_d):
         #print(self.liste_vehicle_item.keys())
         if( str(AC_ID) in self.liste_vehicle_item.keys()):
-            #print("hello")
             item_drone = self.liste_vehicle_item[str(AC_ID)]
             modele_drone = item_drone.drone
             modele_drone.position=(pos_x*100,pos_y*100,pos_z*100)
-            print(pos_x)
 
             quat = [quat_a,quat_b,quat_c,quat_d]
             quat= quat/ np.linalg.norm(quat)   #normalisation du quaterion
