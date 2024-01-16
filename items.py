@@ -65,10 +65,10 @@ class VehicleItem(QGraphicsPolygonItem):
 
         self.drone = vehicle
         self.x1= vehicle.position[0] + 25            #je défini les points du triangle, centré
-        self.y1= vehicle.position[1] + 25
-        self.x2= vehicle.position[0] 
+        self.y1= vehicle.position[1] - 25
+        self.x2= vehicle.position[0] - 25
         self.y2= vehicle.position[1] - 25
-        self.x3= vehicle.position[0] - 25
+        self.x3= vehicle.position[0]
         self.y3=vehicle.position[1] + 25
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
