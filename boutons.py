@@ -67,16 +67,17 @@ class HexagonBouton(QPushButton):
         # Define the points of the regular hexagon
         side_length = self.width() / 2
         apothem = side_length * math.sqrt(3) / 2
-
+        
         # Define the points of the hexagon
         points = [
-            QPointF(self.width() / 2, 0),
+            QPointF(self.width() / 4, 0),
+            QPointF(3*self.width() / 4, 0),
             QPointF(self.width(), apothem),
-            QPointF(self.width(), apothem + side_length),
-            QPointF(self.width() / 2, 2 * apothem + side_length),
-            QPointF(0, apothem + side_length),
+            QPointF(3 * self.width() / 4, 2 * apothem),
+            QPointF(self.width() / 4 , apothem * 2),
             QPointF(0, apothem)
         ]
+
 
        
         hexagon_polygon = QPolygonF(points)
