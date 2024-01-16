@@ -87,24 +87,24 @@ class HexagonButton(QPushButton):
         painter.drawPolygon(hexagon_polygon)
 
 
-class CarreeButton(QPushButton):
+class SquareButton(QPushButton):
     def __init__(self, main_window):
-        super(CarreeButton, self).__init__()
+        super(SquareButton, self).__init__()
         self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
-        self.clicked.connect(self.main_window.ajoute_buildingcarre)  # Connectez le clic à la méthode de la fenêtre principale
+        self.clicked.connect(self.main_window.ajoute_buildingsquare)  # Connectez le clic à la méthode de la fenêtre principale
         self.setFixedSize(50, 50)  # taille du widget
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # Définir les points du carré
+        # Définir les points du square
         points = [QPointF(0, 0), QPointF(self.width(), 0), QPointF(self.width(), self.height()), QPointF(0, self.height())]
 
-        # On crée le carrée
-        carree_polygon = QPolygonF(points)
+        # On crée le squaree
+        square_polygon = QPolygonF(points)
 
        # on dessine
         painter.setBrush(QBrush(Qt.red))
         painter.setPen(QPen(Qt.black))
-        painter.drawPolygon(carree_polygon)
+        painter.drawPolygon(square_polygon)
