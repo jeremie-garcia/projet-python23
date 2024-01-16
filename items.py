@@ -133,7 +133,7 @@ class VehiculeItem(QGraphicsPolygonItem):
 
     def update_drone_color(self):
         color_name = self.details_dialog.color_combobox.currentText()
-        color_dict = {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Magenta': Qt.magenta, 'Cyan':Qt.cyan}
+        color_dict = {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta, 'Cyan':Qt.cyan}
         self.setBrush(QBrush(color_dict.get(color_name, Qt.cyan)))
         self.setPen(QPen(color_dict.get(color_name, Qt.cyan)))
 
@@ -146,16 +146,32 @@ class GoalItem(QGraphicsPolygonItem):
     def __init__(self,vehicule):
 
         self.drone = vehicule
-        self.x1= vehicule.position[0] + 25        #points du triangle pour la cible
-        self.y1= vehicule.position[1] + 25
-        self.x2= vehicule.position[0] 
-        self.y2= vehicule.position[1] - 25
-        self.x3= vehicule.position[0] - 25
-        self.y3=vehicule.position[1] + 25
+        self.x1= vehicule.position[0]        #points du triangle pour la cible
+        self.y1= vehicule.position[1] + 30
+        self.x2= vehicule.position[0] + 5
+        self.y2= vehicule.position[1] + 5
+        self.x3= vehicule.position[0] + 30
+        self.y3=vehicule.position[1]
+        self.x4= vehicule.position[0] + 5      
+        self.y4= vehicule.position[1] - 5
+        self.x5= vehicule.position[0] 
+        self.y5= vehicule.position[1] - 30
+        self.x6= vehicule.position[0] - 5
+        self.y6=vehicule.position[1] - 5
+        self.x7= vehicule.position[0] - 30    
+        self.y7= vehicule.position[1]
+        self.x8= vehicule.position[0] - 5
+        self.y8= vehicule.position[1] + 5
+
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
-                        QPointF(self.x2, self.y2 ),
-                        QPointF(self.x3, self.y3)
+                        QPointF(self.x2, self.y2),
+                        QPointF(self.x3, self.y3),
+                        QPointF(self.x4, self.y4),
+                        QPointF(self.x5, self.y5),
+                        QPointF(self.x6, self.y6),
+                        QPointF(self.x7, self.y7),
+                        QPointF(self.x8, self.y8)
                     ])
         
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
