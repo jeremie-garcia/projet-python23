@@ -20,17 +20,24 @@ class Drone:
 class Modele:
     def __init__(self):
         self.buildings=[] #liste de building
-        self.drone=[] #liste de drones
+        self.drones=[] #liste de drones
 
     def add_building(self,build):
         self.buildings.append(build) #ajout de building
 
+    def remove_building(self,build_id):
+        self.buildings = [b for b in self.buildings if b.ID != build_id]
+
+
     def add_drone(self,vehicles):
-        self.drone.append(vehicles) #ajout de drone
+        self.drones.append(vehicles) #ajout de drone
+
+    def remove_drone(self,drone_id):
+        self.drones = [d for d in self.drones if d.ID != drone_id]
 
     def json(self,cases_name): #cases_key = nom de la 'cases' du json 
         buildings_json = [{'ID': Building.ID, 'vertices': (np.array(Building.vertices)/100).tolist()} for Building in self.buildings] #on divise par 100 les vertices pour être en mètre
-        drones_json = [{'ID': Drone.ID, 'position': (np.array(Drone.position)/100).tolist(), 'goal': (np.array(Drone.goal)/100).tolist(), 'orientation' : Drone.orientation, 'source_strength': Drone.source_strength, 'imag_source_strength' : Drone.imag_source_strength, 'sink_strength': Drone.sink_strength, 'safety': Drone.safety} for Drone in self.drone]
+        drones_json = [{'ID': Drone.ID, 'position': (np.array(Drone.position)/100).tolist(), 'goal': (np.array(Drone.goal)/100).tolist(), 'orientation' : Drone.orientation, 'source_strength': Drone.source_strength, 'imag_source_strength' : Drone.imag_source_strength, 'sink_strength': Drone.sink_strength, 'safety': Drone.safety} for Drone in self.drones]
         dico={cases_name: {'buildings': buildings_json, 'vehicles': drones_json}} #dictionnaire de dictionnaire avec cases_name en clé principale et les dictionnaires drones et buildings
         with open('data.json','w') as file:
             json.dump(dico, file, indent=2) #ouvrir et enregistrer la liste de dictionnaire dans un fichier json
