@@ -10,4 +10,3 @@ def quaternion_to_euler(quat):
     yaw_deg = np.degrees(yaw)
     return yaw_deg
 
-angle_drone= quaternion_to_euler(quat)
