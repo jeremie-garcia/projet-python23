@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from gflow.utils.plot_utils import PlotTrajectories
 from gflow.cases import Cases
 from gflow.utils.simulation_utils import run_simulation
+import numpy as np
 import scenegraphique
 import modele
 import buttons
@@ -14,8 +15,8 @@ import drone_monitoring
 
 #quat= drone_data[4:7]
 #ang_drone= quaternion_to_euler(quat)
-ang_drone=180
-ang_goal=180
+ang_drone=0
+ang_goal=0
 
 
 
@@ -28,7 +29,7 @@ class MaFenetrePrincipale(QMainWindow):
         self.vue.scale(1, -1)    # permet de retouner l'axe y pour coller avec les axes de la volières
         self.vue.fitInView(self.scene.itemsBoundingRect(), Qt.KeepAspectRatio) 
 
-        self.drone_index=60
+        self.drone_index=65
         self.building_index=1
 
         self.button_json = QPushButton('créer json')
@@ -156,10 +157,21 @@ class MaFenetrePrincipale(QMainWindow):
 
         
     def update_drone_data(self, AC_ID, pos_x, pos_y,pos_z, quat_a, quat_b, quat_c, quat_d):
-        item_drone = self.liste_vehicle_item[AC_ID]
-        modele_drone = item_drone.drone
-        modele_drone.position=(pos_x,pos_y,pos_z)
-        item_drone.update_position()
+        #print(self.liste_vehicle_item.keys())
+        if( str(AC_ID) in self.liste_vehicle_item.keys()):
+            #print("hello")
+            item_drone = self.liste_vehicle_item[str(AC_ID)]
+            modele_drone = item_drone.drone
+            modele_drone.position=(pos_x*100,pos_y*100,pos_z*100)
+            print(pos_x)
+
+            quat = [quat_a,quat_b,quat_c,quat_d]
+            quat= quat/ np.linalg.norm(quat)   #normalisation du quaterion
+            yaw = np.arctan2(2 * (quat_a*quat_b + quat_c*quat_d), 1 - 2 * (quat_b**2 + quat_c**2))  #mouvement lacet
+            modele_drone.orientation = np.degrees(yaw)
+
+            
+            item_drone.update_position()
 
 
 
@@ -178,6 +190,7 @@ class MaFenetrePrincipale(QMainWindow):
 
         #change le nom pour le prochain drone
         self.drone_index+=1
+
 
 
     
@@ -238,12 +251,20 @@ class MaFenetreSecondaire(QDialog):
         self.name_line_edit = QLineEdit(VehicleItem.drone.ID)
         self.name_line_edit.textChanged.connect(VehicleItem.update_drone_ID)
 
+
+        self.modele = modele.Modele()
+        self.vehicleitem = VehicleItem
         
         # Menu déroulant avec la couleur
         self.color_combobox = QComboBox()
         self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
         self.color_combobox.setCurrentIndex(0)
         self.color_combobox.currentIndexChanged.connect(VehicleItem.update_drone_color)
+
+        # Boutton pour enlever le drone:
+        remove_button = QPushButton ("retirer le drone")
+        remove_button.clicked.connect(lambda : self.modele.remove_drone(self.vehicleitem.drone.ID))
+        #remove_button.clicked.connect(self.remove_drone)  
        
 
         #boutton ok
@@ -255,8 +276,19 @@ class MaFenetreSecondaire(QDialog):
         layout.addWidget(name_label)
         layout.addWidget(self.name_line_edit)
         layout.addWidget(self.color_combobox)
+        layout.addWidget(remove_button)
         layout.addWidget(ok_button)
         
         # Initialisation classique
         self.setLayout(layout)   
         self.show()
+
+    # def remove_drone(self):
+    #     selected_items = maindrone.fenetre.selectedItems()
+
+    #     for item in selected_items:
+    #         if isinstance(item, items.VehicleItem):
+    #             drone_id = item.drone.ID
+    #             self.model.remove_drone(drone_id)
+    #             self.scene.removeItem(item)
+    #             del self.liste_vehicle_item[drone_id]
