@@ -1,0 +1,26 @@
+self.x1 = vehicule.position[0] + 25
+self.y1 = vehicule.position[1]
+
+self.x2 = vehicule.position[0] + 10
+self.y2 = vehicule.position[1] - 25
+
+self.x3 = vehicule.position[0] - 10
+self.y3 = vehicule.position[1] - 25
+
+self.x4 = vehicule.position[0] - 25
+self.y4 = vehicule.position[1]
+
+self.x5 = vehicule.position[0]
+self.y5 = vehicule.position[1] - 50
+
+self.x6 = vehicule.position[0] + 25
+self.y6 = vehicule.position[1]
+
+self.polygone = QPolygonF([
+    QPointF(self.x1, self.y1),
+    QPointF(self.x2, self.y2),
+    QPointF(self.x3, self.y3),
+    QPointF(self.x4, self.y4),
+    QPointF(self.x5, self.y5),
+    QPointF(self.x6, self.y6)
+])
