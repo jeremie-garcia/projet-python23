@@ -8,32 +8,14 @@ class MaSceneGraphique(QGraphicsScene):
 
         # Définir la taille de l'image (carrée)
         image_size = 800
-
-        # Charger l'image et redimensionner
-        image_path = 'grilleflipped.jpg'
-
-        
-
-        #img = Image.open(image_path)
-        #flipped_image = img.transpose(Image.FLIP_TOP_BOTTOM)
-        #flipped_image.save('flipped_grille.png')
-
-        #image_path = 'flipped_grille'
-
+        #l'image est retorunée à cause de l'inversion de l'axe y
+        image_path = 'grilleflipped.jpg' #chemin d'acces de l'image   
         pixmap = QPixmap(image_path)
         scaled_pixmap = pixmap.scaled(image_size, image_size, Qt.KeepAspectRatio)
-
-        
-
-        # flippedimage = pixmap.toImage().mirrored(False,True)
-        # flippedpixmap = QPixmap.fromImage(flippedimage)
-        # imageItem = QGraphicsPixmapItem(flippedpixmap)
-
         # Calculer les coordonnées pour centrer l'image
         x_center = -image_size / 2
         y_center = -image_size / 2
-        
         # Ajouter l'image à la scène
         grid_item = QGraphicsPixmapItem(scaled_pixmap)
-        grid_item.setPos(x_center, y_center)
+        grid_item.setPos(x_center, y_center) # permet de bien positionner l'image
         self.addItem(grid_item)
