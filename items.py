@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import QGraphicsSceneMouseEvent,  QGraphicsPolygonItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen 
 from PyQt5.QtCore import Qt, QPointF
@@ -61,16 +60,16 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
 
 
 
-class VehiculeItem(QGraphicsPolygonItem):
-    def __init__(self,vehicule):
+class VehicleItem(QGraphicsPolygonItem):
+    def __init__(self,vehicle):
 
-        self.drone = vehicule
-        self.x1= vehicule.position[0] + 25            #je défini les points du triangle, centré
-        self.y1= vehicule.position[1] + 25
-        self.x2= vehicule.position[0] 
-        self.y2= vehicule.position[1] - 25
-        self.x3= vehicule.position[0] - 25
-        self.y3=vehicule.position[1] + 25
+        self.drone = vehicle
+        self.x1= vehicle.position[0] + 25            #je défini les points du triangle, centré
+        self.y1= vehicle.position[1] + 25
+        self.x2= vehicle.position[0] 
+        self.y2= vehicle.position[1] - 25
+        self.x3= vehicle.position[0] - 25
+        self.y3=vehicle.position[1] + 25
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
                         QPointF(self.x2, self.y2 ),
@@ -143,25 +142,25 @@ class VehiculeItem(QGraphicsPolygonItem):
 
 
 class GoalItem(QGraphicsPolygonItem):
-    def __init__(self,vehicule):
+    def __init__(self,vehicle):
 
-        self.drone = vehicule
-        self.x1= vehicule.position[0]        #points du triangle pour la cible
-        self.y1= vehicule.position[1] + 30
-        self.x2= vehicule.position[0] + 5
-        self.y2= vehicule.position[1] + 5
-        self.x3= vehicule.position[0] + 30
-        self.y3=vehicule.position[1]
-        self.x4= vehicule.position[0] + 5      
-        self.y4= vehicule.position[1] - 5
-        self.x5= vehicule.position[0] 
-        self.y5= vehicule.position[1] - 30
-        self.x6= vehicule.position[0] - 5
-        self.y6=vehicule.position[1] - 5
-        self.x7= vehicule.position[0] - 30    
-        self.y7= vehicule.position[1]
-        self.x8= vehicule.position[0] - 5
-        self.y8= vehicule.position[1] + 5
+        self.drone = vehicle
+        self.x1 = vehicle.position[0]        #points du triangle pour la cible
+        self.y1 = vehicle.position[1] + 30
+        self.x2 = vehicle.position[0] + 5
+        self.y2 = vehicle.position[1] + 5
+        self.x3 = vehicle.position[0] + 30
+        self.y3 = vehicle.position[1]
+        self.x4 = vehicle.position[0] + 5      
+        self.y4 = vehicle.position[1] - 5
+        self.x5 = vehicle.position[0] 
+        self.y5 = vehicle.position[1] - 30
+        self.x6 = vehicle.position[0] - 5
+        self.y6 = vehicle.position[1] - 5
+        self.x7 = vehicle.position[0] - 30    
+        self.y7 = vehicle.position[1]
+        self.x8 = vehicle.position[0] - 5
+        self.y8 = vehicle.position[1] + 5
 
         self.polygone = QPolygonF([                              #je fais un polygone triangle
                         QPointF(self.x1, self.y1),
