@@ -90,7 +90,7 @@ class MaFenetrePrincipale(QMainWindow):
         h2_layout.addItem(spacer_left)
         # Ajouter le square à notre layout 
         label_square = QLabel ('ajouter un building square')
-        square_widget = buttons.squareButton(self)
+        square_widget = buttons.SquareButton(self)
         h2_layout.addWidget(square_widget)
         h2_layout.addWidget(label_square)
         # ajouter espace à droite
@@ -168,7 +168,7 @@ class MaFenetrePrincipale(QMainWindow):
         drone = modele.Drone(str(self.drone_index), [0,0,0],[0,0,0], ang_drone)
         self.model.add_drone(drone)
 
-        droneItem = items.VehiculeItem(drone)
+        droneItem = items.VehicleItem(drone)
         goalItem = items.GoalItem(drone)
         self.scene.addItem(droneItem)
         self.scene.addItem(goalItem)
