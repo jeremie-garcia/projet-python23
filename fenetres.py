@@ -78,7 +78,7 @@ class MaFenetrePrincipale(QMainWindow):
         h1_layout.addItem(spacer_left)
         # Ajouter le widget au centre (par exemple, un bouton)
         label_triangle = QLabel ('ajouter un drone')
-        triangle_widget = boutons.TriangleWidget(self)
+        triangle_widget = boutons.TriangleBouton(self)
         h1_layout.addWidget(triangle_widget)
         h1_layout.addWidget(label_triangle)
         # Ajouter un espace extensible droite
@@ -90,7 +90,7 @@ class MaFenetrePrincipale(QMainWindow):
         h2_layout.addItem(spacer_left)
         # Ajouter le carree à notre layout 
         label_carree = QLabel ('ajouter un building carré')
-        carree_widget = boutons.CarreeWidget(self)
+        carree_widget = boutons.CarreeBouton(self)
         h2_layout.addWidget(carree_widget)
         h2_layout.addWidget(label_carree)
         # ajouter espace à droite
@@ -105,7 +105,7 @@ class MaFenetrePrincipale(QMainWindow):
         h3_layout.addItem(spacer_left)
         # Ajouter l'hexagone a notre layout
         label_hexa = QLabel ('ajouter un building hexagonal')
-        hexa_widget = boutons.HexagonWidget(self)
+        hexa_widget = boutons.HexagonBouton(self)
         h3_layout.addWidget(hexa_widget)
         h3_layout.addWidget(label_hexa)
         # ajouter espace à droite
