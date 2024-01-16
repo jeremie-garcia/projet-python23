@@ -24,7 +24,7 @@ class MaFenetrePrincipale(QMainWindow):
 
         self.scene = scenegraphique.MaSceneGraphique(self)
         self.vue = QGraphicsView(self.scene)
-        self.vue.scale(1, -1)
+        self.vue.scale(1, -1)    # permet de retouner l'axe y pour coller avec les axes de la volières
         self.vue.fitInView(self.scene.itemsBoundingRect(), Qt.KeepAspectRatio) 
 
         self.drone_index=60
@@ -46,7 +46,7 @@ class MaFenetrePrincipale(QMainWindow):
         centralWidget.setLayout(mainlayout)
         self.setCentralWidget(centralWidget)
 
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 100, 800, 600)  # taille des la fenetre qui s'ouvre 
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
         self.model = modele.Modele()
         self.button_json.clicked.connect(self.creer_json)
@@ -133,15 +133,19 @@ class MaFenetrePrincipale(QMainWindow):
 
         return LayoutLeft
 
+    # pour la partie zoom suite a de nombreux probème avec l'invertion de l'axe y , aide grace à internet pour resoudre le problème
+    # https://doc.qt.io/qtforpython-5/PySide2/QtGui/QTransform.html#PySide2.QtGui.PySide2.QtGui.QTransform.m11
     def zoom(self, facteur):
-        echelle_actuelle = self.vue.transform().m11()
-        nouvelle_echelle = echelle_actuelle * facteur
+        echelle_actuelle = self.vue.transform().m11() # echelle de la vue actuelle 
+        nouvelle_echelle = echelle_actuelle * facteur # multiplie par un facteur de zoom 
+        # permet de conserver l'invertion de l'axe y avec comme point d'ancrage le centre de la volière 
         self.vue.setTransform(QTransform().translate(self.vue.viewport().width() / 2, self.vue.viewport().height() / 2).scale(nouvelle_echelle, -nouvelle_echelle))
     def zoom_out(self, facteur):
         echelle_actuelle = self.vue.transform().m11()
         nouvelle_echelle = echelle_actuelle * facteur
         self.vue.setTrans
 
+    
     def creer_json(self):
         modele = maindrone.Modele
         modele.json('fichierjson')
