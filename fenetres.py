@@ -7,7 +7,7 @@ from gflow.cases import Cases
 from gflow.utils.simulation_utils import run_simulation
 import scenegraphique
 import modele
-import boutons
+import buttons
 import items
 import maindrone
 import quaternion_to_euler
@@ -79,7 +79,7 @@ class MaFenetrePrincipale(QMainWindow):
         h1_layout.addItem(spacer_left)
         # Ajouter le widget au centre (par exemple, un bouton)
         label_triangle = QLabel ('ajouter un drone')
-        triangle_widget = boutons.TriangleBouton(self)
+        triangle_widget = buttons.TriangleButton(self)
         h1_layout.addWidget(triangle_widget)
         h1_layout.addWidget(label_triangle)
         # Ajouter un espace extensible droite
@@ -91,7 +91,7 @@ class MaFenetrePrincipale(QMainWindow):
         h2_layout.addItem(spacer_left)
         # Ajouter le carree à notre layout 
         label_carree = QLabel ('ajouter un building carré')
-        carree_widget = boutons.CarreeBouton(self)
+        carree_widget = buttons.CarreeButton(self)
         h2_layout.addWidget(carree_widget)
         h2_layout.addWidget(label_carree)
         # ajouter espace à droite
@@ -106,7 +106,7 @@ class MaFenetrePrincipale(QMainWindow):
         h3_layout.addItem(spacer_left)
         # Ajouter l'hexagone a notre layout
         label_hexa = QLabel ('ajouter un building hexagonal')
-        hexa_widget = boutons.HexagonBouton(self)
+        hexa_widget = buttons.HexagonButton(self)
         h3_layout.addWidget(hexa_widget)
         h3_layout.addWidget(label_hexa)
         # ajouter espace à droite
@@ -116,8 +116,8 @@ class MaFenetrePrincipale(QMainWindow):
         
 
         #  # Ajouter des boutons de zoom à votre layout personnalisé
-        zoom_in_button = boutons.ZoomButtonP('ZoomButtonP.jpg', 2 , self ,'Zoom In')
-        zoom_out_button = boutons.ZoomButtonN('ZoomButtonN.jpg', 0.5, self , 'Zoom Out')
+        zoom_in_button = buttons.ZoomButtonP('ZoomButtonP.jpg', 2 , self ,'Zoom In')
+        zoom_out_button = buttons.ZoomButtonN('ZoomButtonN.jpg', 0.5, self , 'Zoom Out')
         LayoutLeft.addWidget(zoom_in_button)
         LayoutLeft.addWidget(zoom_out_button)
 
