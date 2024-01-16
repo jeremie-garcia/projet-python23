@@ -115,8 +115,8 @@ class MaFenetrePrincipale(QMainWindow):
         
 
         #  # Ajouter des boutons de zoom à votre layout personnalisé
-        zoom_in_button = buttons.ZoomButtonP('ZoomButtonP.jpg', 2 , self ,'Zoom In')
-        zoom_out_button = buttons.ZoomButtonN('ZoomButtonN.jpg', 0.5, self , 'Zoom Out')
+        zoom_in_button = buttons.ZoomButtonP('ZoomButtonP.png', 2 , self ,'Zoom In')
+        zoom_out_button = buttons.ZoomButtonN('ZoomButtonN.png', 0.5, self , 'Zoom Out')
         LayoutLeft.addWidget(zoom_in_button)
         LayoutLeft.addWidget(zoom_out_button)
 
