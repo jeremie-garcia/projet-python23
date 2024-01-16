@@ -88,11 +88,11 @@ class MaFenetrePrincipale(QMainWindow):
 
         # ajouter espace à gauche
         h2_layout.addItem(spacer_left)
-        # Ajouter le carree à notre layout 
-        label_carree = QLabel ('ajouter un building carré')
-        carree_widget = buttons.CarreeButton(self)
-        h2_layout.addWidget(carree_widget)
-        h2_layout.addWidget(label_carree)
+        # Ajouter le square à notre layout 
+        label_square = QLabel ('ajouter un building square')
+        square_widget = buttons.squareButton(self)
+        h2_layout.addWidget(square_widget)
+        h2_layout.addWidget(label_square)
         # ajouter espace à droite
         h2_layout.addItem(spacer_right)
 
@@ -181,8 +181,8 @@ class MaFenetrePrincipale(QMainWindow):
 
 
     
-    def ajoute_buildingcarre(self):
-        # créer un batiment carré au centre
+    def ajoute_buildingsquare(self):
+        # créer un batiment square au centre
         vertices=[[0,0,151.5],[0,60.5,151.5],[60.50,60.5,151.5],[60.5,0,151.5]]
         building = modele.Building("building" + str(self.building_index),vertices)
         self.model.add_building(building)
