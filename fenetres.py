@@ -13,7 +13,7 @@ import maindrone
 import quaternion_to_euler
 import drone_monitoring
 
-quat= drone_data[4:7]
+#quat= drone_data[4:7]
 #ang_drone= quaternion_to_euler(quat)
 ang_drone=180
 ang_goal=180
