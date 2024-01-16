@@ -35,7 +35,5 @@ class Modele:
         with open('data.json','w') as file:
             json.dump(dico, file, indent=2) #ouvrir et enregistrer la liste de dictionnaire dans un fichier json
         
-# Exemple :
-ex= Modele()
 
-Modele.json(ex,'fichierjson')
+Modele.json(Modele(),'fichierjson')
