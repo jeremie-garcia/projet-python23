@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import  QSpacerItem, QSizePolicy, QGraphicsView,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QGraphicsView, QMainWindow, QPushButton, QDialog, QComboBox
 from PyQt5.QtGui import QTransform
 from PyQt5.QtCore import Qt
@@ -227,24 +226,24 @@ def gflow():                           # on a reprit votre fichier main_gflow
 
 
 class MaFenetreSecondaire(QDialog):
-    def __init__(self, VehiculeItem):
+    def __init__(self, VehicleItem):
         super(MaFenetreSecondaire, self).__init__()
 
         self.setWindowTitle("Drone Details")
         self.setGeometry(100, 100, 300, 150)
 
         # label avec le nom du drone
-        name_label = QLabel(f"Drone ID: {VehiculeItem.drone.ID}")
+        name_label = QLabel(f"Drone ID: {VehicleItem.drone.ID}")
         # Permet de changer l'ID du drone
-        self.name_line_edit = QLineEdit(VehiculeItem.drone.ID)
-        self.name_line_edit.textChanged.connect(VehiculeItem.update_drone_ID)
+        self.name_line_edit = QLineEdit(VehicleItem.drone.ID)
+        self.name_line_edit.textChanged.connect(VehicleItem.update_drone_ID)
 
         
         # Menu déroulant avec la couleur
         self.color_combobox = QComboBox()
         self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
         self.color_combobox.setCurrentIndex(0)
-        self.color_combobox.currentIndexChanged.connect(VehiculeItem.update_drone_color)
+        self.color_combobox.currentIndexChanged.connect(VehicleItem.update_drone_color)
        
 
         #boutton ok
