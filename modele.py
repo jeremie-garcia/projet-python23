@@ -29,7 +29,7 @@ class Modele:
         self.drone.append(vehicles) #ajout de drone
 
     def json(self,cases_name): #cases_key = nom de la 'cases' du json 
-        buildings_json = [{'ID': Building.ID, 'vertices': (np.array(Building.vertices)/100).tolist()} for Building in self.buildings] #dictionnaire avec les atributs du building (name et verticie)
+        buildings_json = [{'ID': Building.ID, 'vertices': (np.array(Building.vertices)/100).tolist()} for Building in self.buildings] #on divise par 100 les vertices pour être en mètre
         drones_json = [{'ID': Drone.ID, 'position': (np.array(Drone.position)/100).tolist(), 'goal': (np.array(Drone.goal)/100).tolist(), 'orientation' : Drone.orientation, 'source_strength': Drone.source_strength, 'imag_source_strength' : Drone.imag_source_strength, 'sink_strength': Drone.sink_strength, 'safety': Drone.safety} for Drone in self.drone]
         dico={cases_name: {'buildings': buildings_json, 'vehicles': drones_json}} #dictionnaire de dictionnaire avec cases_name en clé principale et les dictionnaires drones et buildings
         with open('data.json','w') as file:
