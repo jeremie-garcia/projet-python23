@@ -29,6 +29,7 @@ class MaFenetrePrincipale(QMainWindow):
         self.vue.fitInView(self.scene.itemsBoundingRect(), Qt.KeepAspectRatio) 
 
         self.drone_index=60
+        self.building_index=1
 
         self.button_json = QPushButton('créer json')
         self.gflow_button = QPushButton('lancer gflow')        
@@ -183,22 +184,23 @@ class MaFenetrePrincipale(QMainWindow):
     def ajoute_buildingcarre(self):
         # créer un batiment carré au centre
         vertices=[[0,0,151.5],[0,60.5,151.5],[60.50,60.5,151.5],[60.5,0,151.5]]
-        building = modele.Building("OBScarré",vertices)
+        building = modele.Building("building" + str(self.building_index),vertices)
         self.model.add_building(building)
 
         buildingItem = items.ObstacleItem(building)
         self.scene.addItem(buildingItem)
+        self.building_index+=1
 
 
     def ajoute_buildinghexa(self):
         # créer un batiment hexagonal au centre
         vertices=[[60,0,151.5],[30,51.96,151.5],[-30,51.96,151.5],[-60,0,151.5],[-30,-51.96,151.5],[30,-51.96,151.5]]
-        building = modele.Building("OBShexa",vertices)
+        building = modele.Building("building" + str(self.building_index),vertices)
         self.model.add_building(building)
 
         buildingItem = items.ObstacleItem(building)
         self.scene.addItem(buildingItem)
-
+        self.building_index+=1
 
 
 def gflow():                           # on a reprit votre fichier main_gflow 
