@@ -116,8 +116,8 @@ class VehicleItem(QGraphicsPolygonItem):
 
     def handle_left_button_held(self, event):
         # Handle right mouse button being held down
-        self.newx=event.scenePos().x()                                #je recupere la position de la souris
-        self.newy=event.scenePos().y()
+        self.drone.position[0]=event.scenePos().x()                                #je recupere la position de la souris
+        self.drone.position[1]=event.scenePos().y()
         self.update_position()
         # print("press", event)
 
@@ -125,9 +125,7 @@ class VehicleItem(QGraphicsPolygonItem):
         
     def update_position(self):
         self.setRotation(self.drone.orientation)
-        self.drone.position[0]=self.newx
-        self.drone.position[1]=self.newy
-        self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
+        self.setPos(QPointF(self.drone.position[0], self.drone.position[1]))                  #ca deplace le drone dans l'interface
         #print(self.drone.target)
 
     def update_drone_color(self):
