@@ -1,4 +1,4 @@
-from NatNetClient import NatNetClient
+from natnet41 import NatNetClient
 from PyQt5.QtCore import pyqtSignal, QObject, QTimer, pyqtSlot
 from PyQt5.QtWidgets import QApplication
 
@@ -21,13 +21,13 @@ class ClientVoliere(QObject):
     def receive_rigid_body_list(self, rigidBodyList, stamp):
         for (ac_id, pos, quat, valid) in rigidBodyList:
             if valid:
-                self.drone_data.emit(ac_id, pos[0], pos[1], pos[2], quat[0], quat[1], quat[2], quat[3])
+                drone_data.emit(ac_id, pos[0], pos[1], pos[2], quat[0], quat[1], quat[2], quat[3])
 
 
 if __name__ == "__main__":
     import sys
     app = QApplication([])
-    voliere = ClientVoliere()
-    voliere.drone_data.connect(print)
-    app.aboutToQuit.connect(voliere.stop)
+    vvt = ClientVoliere()
+    vvt.drone_data.connect(print)
+    app.aboutToQuit.connect(vvt.stop)
     sys.exit(app.exec_())
