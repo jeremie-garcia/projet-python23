@@ -33,12 +33,13 @@ class MaFenetrePrincipale(QMainWindow):
         self.building_index=1
  
         self.button_json = QPushButton('créer json')
-        self.gflow_button = QPushButton('lancer gflow')        
+        self.gflow_button = QPushButton('lancer gflow') 
+        
         # Créer un layout principal
         mainlayout = QHBoxLayout()
  
         # Ajouter layout1 à gauche
-        layoutLeft = self.create_layoutLeft()  # Vous devriez implémenter votre propre fonction pour créer layout1
+        layoutLeft = self.create_layoutLeft()  
         mainlayout.addLayout(layoutLeft)
  
         # Ajouter la scène graphique à droite
@@ -76,11 +77,13 @@ class MaFenetrePrincipale(QMainWindow):
  
         # ajouter espace extensible gauche
         h1_layout.addItem(spacer_left)
+        
         # Ajouter le widget au centre (par exemple, un bouton)
         label_triangle = QLabel ('ajouter un drone')
         triangle_widget = buttons.TriangleButton(self)
         h1_layout.addWidget(triangle_widget)
         h1_layout.addWidget(label_triangle)
+        
         # Ajouter un espace extensible droite
         h1_layout.addItem(spacer_right)
  
@@ -88,33 +91,34 @@ class MaFenetrePrincipale(QMainWindow):
  
         # ajouter espace à gauche
         h2_layout.addItem(spacer_left)
+        
         # Ajouter le square à notre layout
         label_square = QLabel ('ajouter un building square')
         square_widget = buttons.SquareButton(self)
         h2_layout.addWidget(square_widget)
         h2_layout.addWidget(label_square)
+        
         # ajouter espace à droite
         h2_layout.addItem(spacer_right)
  
         LayoutLeft.addLayout(h2_layout)
  
-       
- 
-       
         # ajouter espace à gauche
         h3_layout.addItem(spacer_left)
-        # Ajouter l'hexagone a notre layout
+        
+        # Ajouter l'hexagone à notre layout
         label_hexa = QLabel ('ajouter un building hexagonal')
         hexa_widget = buttons.HexagonButton(self)
         h3_layout.addWidget(hexa_widget)
         h3_layout.addWidget(label_hexa)
+        
         # ajouter espace à droite
         h3_layout.addItem(spacer_right)
        
         LayoutLeft.addLayout(h3_layout)
        
  
-        #  # Ajouter des boutons de zoom à votre layout personnalisé
+        # Ajouter des boutons de zoom à votre layout personnalisé
         zoom_in_button = buttons.ZoomButtonP('ZoomButtonP.jpg', 2 , self ,'Zoom In')
         zoom_out_button = buttons.ZoomButtonN('ZoomButtonN.jpg', 0.5, self , 'Zoom Out')
         LayoutLeft.addWidget(zoom_in_button)
@@ -123,9 +127,7 @@ class MaFenetrePrincipale(QMainWindow):
      
         # boutton json
         LayoutLeft.addWidget(self.button_json)
- 
- 
- 
+        
         # boutton Jflow
         gflow_button = QPushButton('lacer jflow')
         LayoutLeft.addWidget (self.gflow_button)
@@ -135,12 +137,13 @@ class MaFenetrePrincipale(QMainWindow):
  
         return LayoutLeft
  
-    # pour la partie zoom suite a de nombreux probème avec l'invertion de l'axe y , aide grace à internet pour resoudre le problème
-    # https://doc.qt.io/qtforpython-5/PySide2/QtGui/QTransform.html#PySide2.QtGui.PySide2.QtGui.QTransform.m11
+    #nombreux problèmes avec l'invertion de l'axe y pour le zoom, aide grace à internet pour résoudre le problème
+    #source : https://doc.qt.io/qtforpython-5/PySide2/QtGui/QTransform.html#PySide2.QtGui.PySide2.QtGui.QTransform.m11
+    
     def zoom(self, facteur):
         echelle_actuelle = self.vue.transform().m11() # echelle de la vue actuelle
-        nouvelle_echelle = echelle_actuelle * facteur # multiplie par un facteur de zoom
-        # permet de conserver l'invertion de l'axe y avec comme point d'ancrage le centre de la volière
+        nouvelle_echelle = echelle_actuelle * facteur # multiplie par un facteur de zoom  #permet de conserver l'invertion de l'axe y avec comme point d'ancrage le centre de la volière
+        
         #déplace le centre de la vue vers le centre de la fenêtre.
         # applique la nouvelle échelle avec facteur negatif sur le y pour l'inversion
         self.vue.setTransform(QTransform().translate(self.vue.viewport().width() / 2, self.vue.viewport().height() / 2).scale(nouvelle_echelle, -nouvelle_echelle))
@@ -162,8 +165,8 @@ class MaFenetrePrincipale(QMainWindow):
         
 
             quat = [quat_a,quat_b,quat_c,quat_d]
-            quat= quat/ np.linalg.norm(quat)        #normalisation du quaterion
-            yaw = np.arctan2(2 * (quat_a*quat_b + quat_c*quat_d), 1 - 2 * (quat_b**2 + quat_c**2))  #mouvement lacet
+            quat= quat/ np.linalg.norm(quat)        #normalisation du quaternion 
+            yaw = np.arctan2(2 * (quat_a*quat_b + quat_c*quat_d), 1 - 2 * (quat_b**2 + quat_c**2))  # on récupère uniquement le mouvement de lacet
             modele_drone.orientation = np.degrees(yaw)
 
             
@@ -171,8 +174,7 @@ class MaFenetrePrincipale(QMainWindow):
 
 
 
-    def ajoute_drone(self):
-        #creer un drone au centre
+    def ajoute_drone(self):  #créer un drone au centre
         drone = modele.Drone(str(self.drone_index), [0,0,0],[0,0,0], ang_drone)
         self.model.add_drone(drone)
  
@@ -193,8 +195,7 @@ class MaFenetrePrincipale(QMainWindow):
 
 
    
-    def ajoute_buildingsquare(self):
-        # créer un batiment square au centre
+    def ajoute_buildingsquare(self):  # créer un batiment square au centre
         vertices=[[0,0,151.5],[0,60.5,151.5],[60.50,60.5,151.5],[60.5,0,151.5]]
         building = modele.Building("building" + str(self.building_index),vertices)
         self.model.add_building(building)
@@ -204,8 +205,7 @@ class MaFenetrePrincipale(QMainWindow):
         self.building_index+=1
  
 
-    def ajoute_buildinghexa(self):
-        # créer un batiment hexagonal au centre
+    def ajoute_buildinghexa(self):   #créer un batiment hexagonal au centre
         vertices=[[60,0,151.5],[30,51.96,151.5],[-30,51.96,151.5],[-60,0,151.5],[-30,-51.96,151.5],[30,-51.96,151.5]]
         building = modele.Building("building" + str(self.building_index),vertices)
         self.model.add_building(building)
@@ -247,7 +247,7 @@ class MaFenetreSecondaireGoal(QDialog):
         # Permet de changer l'ID du Goal
         self.name_line_edit = QLineEdit(vehicleItem.drone.ID)
  
-        # mettre un slider pour l'altitude
+        # mettre un slider pour l'altitude 
         altitude_display = QLabel (f"Goal altitude :{vehicleItem.drone.goal[2]}")
         altitude_slider = QSlider(Qt.Horizontal)
         altitude_slider.setMinimum(0)
@@ -256,7 +256,7 @@ class MaFenetreSecondaireGoal(QDialog):
         altitude_slider.valueChanged.connect(vehicleItem.update_goal_altitude)
         altitude_slider.valueChanged.connect(lambda val : altitude_display.setText(f"Goal altitude :{val}"))
  
-        # # changer la couleur:
+        #changer la couleur:
         self.color_combobox = QComboBox()
         self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
         self.color_combobox.setCurrentIndex(0)
@@ -268,7 +268,7 @@ class MaFenetreSecondaireGoal(QDialog):
 
        
        
-       # mets en place les layouts
+       # mise en place des layouts
         layout = QVBoxLayout()
         layout.addWidget(name_label)
         layout.addWidget(altitude_display)
@@ -312,7 +312,7 @@ class MaFenetreSecondaireBuilding(QDialog):
         model = fenetre.model
  
        
-       # mets en place les layouts
+       # mise en place des layouts
         layout = QVBoxLayout()
         layout.addWidget(name_label)
         layout.addWidget(altitude_display)
@@ -351,18 +351,18 @@ class MaFenetreSecondaireDrone(QDialog):
         remove_button = QPushButton ("retirer le drone")
 
         model = fenetre.model
+
+         # supprimer la vue graphique de la scene , même chose la scenegaphique.remove (item)
         remove_button.clicked.connect(lambda : model.remove_drone(vehicleItem.drone.ID))
         remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem))
-        remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem.goalItem))
+        remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem.goalItem)) 
         # supprimer la vue graphique de la scene , même chose la scenegaphique.remove (item)
- 
-       
  
         #boutton ok
         ok_button = QPushButton("OK")
         ok_button.clicked.connect(self.accept)
  
-       # mets en place les layouts
+       # mise en place des layouts
         layout = QVBoxLayout()
         layout.addWidget(name_label)
         layout.addWidget(self.name_line_edit)
