@@ -10,8 +10,7 @@ class ZoomButtonP(QPushButton):
         self.zoom_factor = zoom_factor
         self.main_window = main_window
         self.setIcon(QIcon(icon_path))
-        self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
-        # self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
+        self.setIconSize(QSize(50, 50)) 
 
         self.clicked.connect(lambda : self.main_window.zoom(self.zoom_factor))
 
@@ -22,8 +21,7 @@ class ZoomButtonN(QPushButton):
         self.zoom_factor = zoom_factor
         self.main_window = main_window
         self.setIcon(QIcon(icon_path2))
-        self.setIconSize(QSize(50, 50))  # Ajustez la taille de l'icône selon vos besoins
-        # self.clicked.connect(lambda: MaFenetrePrincipale.zoom(MaFenetrePrincipale,2))
+        self.setIconSize(QSize(50, 50))  
 
         self.clicked.connect(lambda : self.main_window.zoom(self.zoom_factor))
 
@@ -32,15 +30,15 @@ class ZoomButtonN(QPushButton):
 class TriangleButton(QPushButton):
     def __init__(self, main_window):
         super(TriangleButton, self,).__init__()
-        self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
-        self.clicked.connect(self.main_window.ajoute_drone)  # Connectez le clic à la méthode de la fenêtre principale
-        self.setFixedSize(50, 50)  # Ajustez la taille 
+        self.main_window = main_window  
+        self.clicked.connect(self.main_window.ajoute_drone)  # Connexion du clic à la méthode de la fenêtre principale
+        self.setFixedSize(50, 50)  
 
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # Définir les points du trig
+        # Définir les points du triangle(drone)
         points = [QPointF(0, self.height()), QPointF(self.width(), self.height()), QPointF(self.width() / 2, 0)]
 
         # Créer le trig
@@ -62,13 +60,10 @@ class HexagonButton(QPushButton):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
-
-
-        # Define the points of the regular hexagon
+        
+        # Définition des points de l'Hexagone
         side_length = self.width() / 2
         apothem = side_length * math.sqrt(3) / 2
-        
-        # Define the points of the hexagon
         points = [
             QPointF(self.width() / 4, 0),
             QPointF(3*self.width() / 4, 0),
@@ -77,9 +72,6 @@ class HexagonButton(QPushButton):
             QPointF(self.width() / 4 , apothem * 2),
             QPointF(0, apothem)
         ]
-
-
-       
         hexagon_polygon = QPolygonF(points)
 
         painter.setBrush(QBrush(Qt.red))
@@ -90,9 +82,9 @@ class HexagonButton(QPushButton):
 class SquareButton(QPushButton):
     def __init__(self, main_window):
         super(SquareButton, self).__init__()
-        self.main_window = main_window  # Ajoutez une référence à la fenêtre principale
-        self.clicked.connect(self.main_window.ajoute_buildingsquare)  # Connectez le clic à la méthode de la fenêtre principale
-        self.setFixedSize(50, 50)  # taille du widget
+        self.main_window = main_window  
+        self.clicked.connect(self.main_window.ajoute_buildingsquare)  
+        self.setFixedSize(50, 50)  
 
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -101,10 +93,10 @@ class SquareButton(QPushButton):
         # Définir les points du square
         points = [QPointF(0, 0), QPointF(self.width(), 0), QPointF(self.width(), self.height()), QPointF(0, self.height())]
 
-        # On crée le squaree
+        # création du square
         square_polygon = QPolygonF(points)
 
-       # on dessine
+       # Dessin
         painter.setBrush(QBrush(Qt.red))
         painter.setPen(QPen(Qt.black))
         painter.drawPolygon(square_polygon)
