@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import  QPushButton
-from PyQt5.QtGui import QPolygonF, QBrush, QPen,QPixmap,QTransform, QPainter, QIcon 
+from PyQt5.QtGui import QPolygonF, QBrush, QPen, QPainter, QIcon 
 from PyQt5.QtCore import Qt, QPointF, QSize
 import math
 
