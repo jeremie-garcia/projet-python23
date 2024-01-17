@@ -176,11 +176,6 @@ class VehicleItem(QGraphicsPolygonItem):
         color_name = self.details_dialog.color_combobox.currentText()
         self.setBrush(QBrush(self.color_dict.get(color_name, Qt.cyan)))
         self.setPen(QPen(self.color_dict.get(color_name, Qt.cyan)))
- 
-    def update_goal_color(self):
-        color_name = self.details_dialog.color_combobox.currentText()
-        GoalItem.setBrush(QBrush(self.color_dict.get(color_name, Qt.cyan)))
-        GoalItem.setPen(QPen(self.color_dict.get(color_name, Qt.cyan)))
 
 
 
@@ -223,6 +218,7 @@ class GoalItem(QGraphicsPolygonItem):
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
        
         self.setRotation(self.drone.orientation)
+        self.color_dict =  {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta, 'Cyan':Qt.cyan}
         self.setBrush(QBrush(Qt.green))
         self.setPen(QPen(Qt.green))
  
@@ -272,3 +268,7 @@ class GoalItem(QGraphicsPolygonItem):
         self.setPos(QPointF(self.drone.goal[0], self.drone.goal[1]))                  
         #print(self.drone.goal)
  
+    def update_goal_color(self):
+        color_name = self.details_dialog.color_combobox.currentText()
+        self.setBrush(QBrush(self.color_dict.get(color_name, Qt.cyan)))
+        self.setPen(QPen(self.color_dict.get(color_name, Qt.cyan)))
