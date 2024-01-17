@@ -5,11 +5,13 @@ from PyQt5.QtCore import Qt, QPointF
 import math
 
 import fenetres
+import maindrone
  
 
 class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
-    def __init__(self,building):
+    def __init__(self,building, fenetre):
  
+        self.fenetre_principale = fenetre
         self.building = building
         self.building_ID = self.building.ID
         self.polygonpoints=[]
@@ -30,7 +32,7 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         if event.button() == Qt.RightButton:
          
-            self.details_dialog = fenetres.MaFenetreSecondaireBuilding(self)
+            self.details_dialog = fenetres.MaFenetreSecondaireBuilding(self, self.fenetre_principale)
             self.details_dialog.show()
  
         elif event.button() == Qt.LeftButton:
@@ -38,16 +40,13 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
             self.handle_left_button_press(event)
  
     def handle_right_button_press(self, event):
-        # Handle right mouse button press
         pass
  
     def handle_left_button_press(self, event):
-        # Handle left mouse button press
         pass
  
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         if event.buttons() & Qt.LeftButton:
-            # Right mouse button is being held down
             self.handle_left_button_held(event)
            
  
