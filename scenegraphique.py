@@ -8,7 +8,7 @@ class MaSceneGraphique(QGraphicsScene):
 
         # Définir la taille de l'image (carrée)
         image_size = 800   #l'image est retournée à cause de l'inversion de l'axe y
-        image_path = 'grilleflipped.jpg' #chemin d'acces de l'image   
+        image_path = 'grilleflipped.jpg' #chemin d'accès de l'image   
         pixmap = QPixmap(image_path)
         scaled_pixmap = pixmap.scaled(image_size, image_size, Qt.KeepAspectRatio)
         
