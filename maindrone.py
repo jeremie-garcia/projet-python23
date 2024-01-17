@@ -5,12 +5,6 @@ import scenegraphique
 import drone_monitoring
 import fenetres
 
-
-
-Modele=modele.Modele()
-
-
-     
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     print("lancement du programme")
@@ -23,7 +17,6 @@ if __name__ == '__main__':
 
     voliere = drone_monitoring.ClientVoliere()
     fenetre = fenetres.MaFenetrePrincipale()
-
 
     voliere.drone_data.connect(fenetre.update_drone_data)
     #if voliere.drone_data[0]==888:

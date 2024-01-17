@@ -10,6 +10,7 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
     def __init__(self,building):
  
         self.building = building
+        self.building_ID = self.building.ID
         self.polygonpoints=[]
         #pour chaque vertices (x,y,z) je cree un point QTpointf et j'ajoute dans la liste
         for vertice in building.vertices:
@@ -22,17 +23,52 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
        
         self.setBrush(QBrush(Qt.red))                        #le dessine
         self.setPen(QPen(Qt.red))
-        maindrone.Modele.add_building(self.building)          #l'ajoute au modèle
+               #l'ajoute au modèle
  
-    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
-        print("press", event)
+    # def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+    #     print("press", event)
    
-    def mouseMoveEvent(self, event):
-        #quand on bouge alors on change la position du drone
+    # def mouseMoveEvent(self, event):
+    #     #quand on bouge alors on change la position du drone
+    #     self.newx=event.scenePos().x()                                #je recupere la position de la souris
+    #     self.newy=event.scenePos().y()
+       
+    #     self.update_position()
+        
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+        if event.button() == Qt.RightButton:
+         
+            self.details_dialog = fenetres.MaFenetreSecondaireBuilding(self)
+            self.details_dialog.show()
+ 
+        elif event.button() == Qt.LeftButton:
+            # Left mouse button is pressed
+            self.handle_left_button_press(event)
+ 
+    def handle_right_button_press(self, event):
+        # Handle right mouse button press
+        pass
+ 
+    def handle_left_button_press(self, event):
+        # Handle left mouse button press
+        pass
+ 
+    def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        if event.buttons() & Qt.LeftButton:
+            # Right mouse button is being held down
+            self.handle_left_button_held(event)
+           
+ 
+    def handle_left_button_held(self, event):
+        # Handle right mouse button being held down
+        
         self.newx=event.scenePos().x()                                #je recupere la position de la souris
         self.newy=event.scenePos().y()
-       
         self.update_position()
+        # print("press", event)
+ 
+        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
+ 
        
     def update_position(self):
         #self.setRotation(self.drone.orient)
@@ -57,10 +93,15 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le building dans l'interface
         #print(self.building.vertices)
 
+    def uptade_building_altitude (self, new_alt):
+        nbs_sommets=len(self.building.vertices)
+        for i in range (nbs_sommets):
+            self.building.vertices[i][2] = new_alt
+
 
 
 class VehicleItem(QGraphicsPolygonItem):
-    def __init__(self,vehicle):
+    def __init__(self,vehicle, fenetre):
  
         self.drone = vehicle
         self.x1= vehicle.position[0] + 25            #je défini les points du triangle, centré
@@ -82,9 +123,11 @@ class VehicleItem(QGraphicsPolygonItem):
         self.setRotation(self.drone.orientation)
         self.setBrush(QBrush(self.color_dict['Green']))
         self.setPen(QPen(self.color_dict['Green']))
-        maindrone.Modele.add_drone(self.drone)
+        #maindrone.Modele.add_drone(self.drone)
         # self.scene = scene  # Ajoutez une référence à la scène
         # self.view = scene.views()[0]  # Obtenez la vue associée à la scène
+
+        self.fenetre_principale = fenetre
 
 
 
@@ -92,7 +135,7 @@ class VehicleItem(QGraphicsPolygonItem):
         if event.button() == Qt.RightButton:
          
  
-            self.details_dialog = fenetres.MaFenetreSecondaireDrone(self)
+            self.details_dialog = fenetres.MaFenetreSecondaireDrone(self, self.fenetre_principale)
             self.details_dialog.show()
  
         elif event.button() == Qt.LeftButton:
