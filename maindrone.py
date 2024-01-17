@@ -1,6 +1,5 @@
 import sys
 from PyQt5.QtWidgets import  QApplication,QApplication
-import modele
 import scenegraphique
 import drone_monitoring
 import fenetres
