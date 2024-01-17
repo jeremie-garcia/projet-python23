@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QGraphicsSceneMouseEvent,  QGraphicsPolygonItem
 from PyQt5.QtGui import QPolygonF, QBrush, QPen
 from PyQt5.QtCore import Qt, QPointF
+
 import math
-import maindrone
+
 import fenetres
  
 
@@ -25,15 +26,6 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
         self.setPen(QPen(Qt.red))
                #l'ajoute au modèle
  
-    # def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
-    #     print("press", event)
-   
-    # def mouseMoveEvent(self, event):
-    #     #quand on bouge alors on change la position du drone
-    #     self.newx=event.scenePos().x()                                #je recupere la position de la souris
-    #     self.newy=event.scenePos().y()
-       
-    #     self.update_position()
         
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         if event.button() == Qt.RightButton:
@@ -59,19 +51,13 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
             self.handle_left_button_held(event)
            
  
-    def handle_left_button_held(self, event):
-        # Handle right mouse button being held down
-        
+    def handle_left_button_held(self, event):      
         self.newx=event.scenePos().x()                                #je recupere la position de la souris
         self.newy=event.scenePos().y()
         self.update_position()
-        # print("press", event)
+
  
-        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
- 
-       
     def update_position(self):
-        #self.setRotation(self.drone.orient)
         nbs_sommets=len(self.building.vertices)
         if nbs_sommets == 4:                            # calcul des coordonées en fonctions de carré ou hexa
             self.building.vertices[0][0]= self.newx          
@@ -91,7 +77,6 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
            
  
         self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le building dans l'interface
-        #print(self.building.vertices)
 
     def uptade_building_altitude (self, new_alt):
         nbs_sommets=len(self.building.vertices)
@@ -118,14 +103,11 @@ class VehicleItem(QGraphicsPolygonItem):
        
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
        
-        # self.color_index = ['Red','Green','Blue','Yellow','Purple','Cyan']
+
         self.color_dict =  {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta, 'Cyan':Qt.cyan}
         self.setRotation(self.drone.orientation)
         self.setBrush(QBrush(self.color_dict['Green']))
         self.setPen(QPen(self.color_dict['Green']))
-        #maindrone.Modele.add_drone(self.drone)
-        # self.scene = scene  # Ajoutez une référence à la scène
-        # self.view = scene.views()[0]  # Obtenez la vue associée à la scène
 
         self.fenetre_principale = fenetre
 
@@ -133,37 +115,27 @@ class VehicleItem(QGraphicsPolygonItem):
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         if event.button() == Qt.RightButton:
-         
- 
             self.details_dialog = fenetres.MaFenetreSecondaireDrone(self, self.fenetre_principale)
             self.details_dialog.show()
  
         elif event.button() == Qt.LeftButton:
-            # Left mouse button is pressed
             self.handle_left_button_press(event)
  
     def handle_right_button_press(self, event):
-        # Handle right mouse button press
         pass
  
     def handle_left_button_press(self, event):
-        # Handle left mouse button press
         pass
  
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         if event.buttons() & Qt.LeftButton:
-            # Right mouse button is being held down
             self.handle_left_button_held(event)
            
  
     def handle_left_button_held(self, event):
-        # Handle right mouse button being held down
         self.newx=event.scenePos().x()                                #je recupere la position de la souris
         self.newy=event.scenePos().y()
         self.update_position()
-        # print("press", event)
- 
-        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
        
     def update_position(self):
         self.setRotation(self.drone.orientation)
@@ -177,11 +149,11 @@ class VehicleItem(QGraphicsPolygonItem):
         self.setBrush(QBrush(self.color_dict.get(color_name, Qt.cyan)))
         self.setPen(QPen(self.color_dict.get(color_name, Qt.cyan)))
 
-
-
     def update_drone_ID(self, new_text):
         self.drone.ID = new_text
  
+
+
 
 class GoalItem(QGraphicsPolygonItem):
     def __init__(self,vehicle):
@@ -225,8 +197,7 @@ class GoalItem(QGraphicsPolygonItem):
     def update_goal_altitude (self, new_alt):
         self.drone.goal[2] = new_alt
        
- 
-       
+   
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
         if event.button() == Qt.RightButton:
          
@@ -234,39 +205,31 @@ class GoalItem(QGraphicsPolygonItem):
             self.details_dialog.show()
  
         elif event.button() == Qt.LeftButton:
-            # Left mouse button is pressed
             self.handle_left_button_press(event)
  
     def handle_right_button_press(self, event):
-        # Handle right mouse button press
         pass
  
     def handle_left_button_press(self, event):
-        # Handle left mouse button press
         pass
  
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         if event.buttons() & Qt.LeftButton:
-            # Right mouse button is being held down
             self.handle_left_button_held(event)
            
  
     def handle_left_button_held(self, event):
-        # Handle right mouse button being held down
         
         self.drone.goal[0]=event.scenePos().x()                                #je recupere la position de la souris
         self.drone.goal[1]=event.scenePos().y()
         self.update_position()
-        # print("press", event)
- 
-        #self.drone.set_position(evt.scenePos().x(), evt.scenePos().y())
  
        
     def update_position(self):
         self.setRotation(self.drone.orientation)
  
         self.setPos(QPointF(self.drone.goal[0], self.drone.goal[1]))                  
-        #print(self.drone.goal)
+
  
     def update_goal_color(self):
         color_name = self.details_dialog.color_combobox.currentText()
