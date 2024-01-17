@@ -15,12 +15,12 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
         self.building = building
         self.building_ID = self.building.ID
         self.polygonpoints=[]
-        #pour chaque vertices (x,y,z) je cree un point QTpointf et j'ajoute dans la liste
+        #pour chaque vertices (x,y,z) je crée un point QTpoint et je l'ajoute dans la liste
         for vertice in building.vertices:
             self.polygonpoints.append(QPointF(vertice[0],vertice[1]))      
            
  
-        self.polygone = QPolygonF( self.polygonpoints )         #défini le polygone avec ses points
+        self.polygone = QPolygonF( self.polygonpoints )         #définition du polygone avec ses points
        
         super(QGraphicsPolygonItem,self).__init__(self.polygone)
        
@@ -29,14 +29,13 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
                #l'ajoute au modèle
  
         
-    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None: #
         if event.button() == Qt.RightButton:
          
             self.details_dialog = fenetres.MaFenetreSecondaireBuilding(self, self.fenetre_principale)
             self.details_dialog.show()
  
         elif event.button() == Qt.LeftButton:
-            # Left mouse button is pressed
             self.handle_left_button_press(event)
  
     def handle_right_button_press(self, event):
@@ -51,14 +50,14 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
            
  
     def handle_left_button_held(self, event):      
-        self.newx=event.scenePos().x()                                #je recupere la position de la souris
+        self.newx=event.scenePos().x()        #je recupere la position de la souris
         self.newy=event.scenePos().y()
         self.update_position()
 
  
     def update_position(self):
         nbs_sommets=len(self.building.vertices)
-        if nbs_sommets == 4:                            # calcul des coordonées en fonctions de carré ou hexa
+        if nbs_sommets == 4:                            # calcul des coordonées en fonctions du carré ou hexa
             self.building.vertices[0][0]= self.newx          
             self.building.vertices[0][1]= self.newy
             self.building.vertices[1][0]= self.newx
@@ -75,7 +74,7 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
                 self.building.vertices[i][1]=self.newy + 60 * math.sin(angle)
            
  
-        self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le building dans l'interface
+        self.setPos(QPointF(self.newx, self.newy))                  # deplace le building dans l'interface
 
     def uptade_building_altitude (self, new_alt):
         nbs_sommets=len(self.building.vertices)
@@ -88,7 +87,7 @@ class VehicleItem(QGraphicsPolygonItem):
     def __init__(self,vehicle, fenetre):
  
         self.drone = vehicle
-        self.x1= vehicle.position[0] + 25            #je défini les points du triangle, centré
+        self.x1= vehicle.position[0] + 25            #définition des points du triangle, centré
         self.y1= vehicle.position[1] - 25
         self.x2= vehicle.position[0] - 25
         self.y2= vehicle.position[1] - 25
@@ -140,7 +139,7 @@ class VehicleItem(QGraphicsPolygonItem):
         self.setRotation(self.drone.orientation)
         self.drone.position[0]=self.newx
         self.drone.position[1]=self.newy
-        self.setPos(QPointF(self.newx, self.newy))                  #ca deplace le drone dans l'interface
+        self.setPos(QPointF(self.newx, self.newy))                  #deplace le drone dans l'interface
         #print(self.drone.target)
  
     def update_drone_color(self):
@@ -219,7 +218,7 @@ class GoalItem(QGraphicsPolygonItem):
  
     def handle_left_button_held(self, event):
         
-        self.drone.goal[0]=event.scenePos().x()                                #je recupere la position de la souris
+        self.drone.goal[0]=event.scenePos().x()           
         self.drone.goal[1]=event.scenePos().y()
         self.update_position()
  
