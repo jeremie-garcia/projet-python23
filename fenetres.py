@@ -1,21 +1,22 @@
-from PyQt5.QtWidgets import  QSpacerItem, QSizePolicy, QGraphicsView,QSlider,QVBoxLayout,QHBoxLayout,QLabel, QLineEdit,QWidget, QGraphicsView, QMainWindow, QPushButton, QDialog, QComboBox
+from PyQt5.QtWidgets import  QSpacerItem, QSizePolicy,QSlider, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QWidget, QGraphicsView, QMainWindow, QPushButton, QDialog, QComboBox
 from PyQt5.QtGui import QTransform
 from PyQt5.QtCore import Qt
-# from gflow.utils.plot_utils import PlotTrajectories
-# from gflow.cases import Cases
-# from gflow.utils.simulation_utils import run_simulation
+
+from gflow.utils.plot_utils import PlotTrajectories
+from gflow.cases import Cases
+from gflow.utils.simulation_utils import run_simulation
+
 import scenegraphique
 import modele
 import buttons
 import items
-import maindrone
-import quaternion_to_euler
-import drone_monitoring
+
 import numpy as np
-#quat= drone_data[4:7]
-#ang_drone= quaternion_to_euler(quat)
-ang_drone=180
-ang_goal=180
+
+
+
+ang_drone=0
+ang_goal=0
 
 
 
@@ -54,7 +55,7 @@ class MaFenetrePrincipale(QMainWindow):
         self.button_json.clicked.connect(self.creer_json)
  
 
-        # self.gflow_button.clicked.connect(gflow)
+        self.gflow_button.clicked.connect(gflow)
  
         self.liste_vehicle_item = {}
  
@@ -69,7 +70,6 @@ class MaFenetrePrincipale(QMainWindow):
         h1_layout = QHBoxLayout()
         h2_layout = QHBoxLayout()
         h3_layout = QHBoxLayout()
-        h4_layout = QHBoxLayout()
  
         spacer_left = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         spacer_right = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
@@ -155,16 +155,14 @@ class MaFenetrePrincipale(QMainWindow):
  
        
     def update_drone_data(self, AC_ID, pos_x, pos_y,pos_z, quat_a, quat_b, quat_c, quat_d):
-        #print(self.liste_vehicle_item.keys())
         if( str(AC_ID) in self.liste_vehicle_item.keys()):
-            #print("hello")
             item_drone = self.liste_vehicle_item[str(AC_ID)]
             modele_drone = item_drone.drone
             modele_drone.position=(pos_x*100,pos_y*100,pos_z*100)
         
 
             quat = [quat_a,quat_b,quat_c,quat_d]
-            quat= quat/ np.linalg.norm(quat)   #normalisation du quaterion
+            quat= quat/ np.linalg.norm(quat)        #normalisation du quaterion
             yaw = np.arctan2(2 * (quat_a*quat_b + quat_c*quat_d), 1 - 2 * (quat_b**2 + quat_c**2))  #mouvement lacet
             modele_drone.orientation = np.degrees(yaw)
 
@@ -201,7 +199,7 @@ class MaFenetrePrincipale(QMainWindow):
         building = modele.Building("building" + str(self.building_index),vertices)
         self.model.add_building(building)
  
-        buildingItem = items.ObstacleItem(building,self)
+        buildingItem = items.ObstacleItem(building)
         self.scene.addItem(buildingItem)
         self.building_index+=1
  
@@ -212,27 +210,27 @@ class MaFenetrePrincipale(QMainWindow):
         building = modele.Building("building" + str(self.building_index),vertices)
         self.model.add_building(building)
  
-        buildingItem = items.ObstacleItem(building, self)
+        buildingItem = items.ObstacleItem(building)
         self.scene.addItem(buildingItem)
         self.building_index+=1
  
 
-# def gflow():                           # on a reprit votre fichier main_gflow 
-#     file_name = "data.json"
-#     case_name = "fichierjson"
+def gflow():                           # on a reprit votre fichier main_gflow 
+    file_name = "data.json"
+    case_name = "fichierjson"
 
-#     case = Cases.get_case(file_name=file_name, case_name=case_name)
+    case = Cases.get_case(file_name=file_name, case_name=case_name)
 
-#     run_simulation(
-#         case,
-#         t=2000,  # maximum number of timesteps
-#         update_every=1,  # leave as 1
-#         stop_at_collision=False,  # leave as False
-#         max_avoidance_distance=999999,  # larger than simulation domain
-#     )
+    run_simulation(
+        case,
+        t=2000,  # maximum number of timesteps
+        update_every=1,  # leave as 1
+        stop_at_collision=False,  # leave as False
+        max_avoidance_distance=999999,  # larger than simulation domain
+    )
 
-#     trajectory_plot = PlotTrajectories(case, update_every=1)
-#     trajectory_plot.show()
+    trajectory_plot = PlotTrajectories(case, update_every=1)
+    trajectory_plot.show()
  
    
  
@@ -306,8 +304,6 @@ class MaFenetreSecondaireBuilding(QDialog):
         altitude_slider.valueChanged.connect(buildingItem.uptade_building_altitude)
         altitude_slider.valueChanged.connect(lambda val : altitude_display.setText(f"Building altitude :{val}"))
  
-
-
         
         #boutton ok
         ok_button = QPushButton("OK")
@@ -328,6 +324,9 @@ class MaFenetreSecondaireBuilding(QDialog):
         self.setLayout(layout)  
         self.show()
  
+
+
+
 class MaFenetreSecondaireDrone(QDialog):
     def __init__(self, vehicleItem, fenetre):
         super(MaFenetreSecondaireDrone, self).__init__()
@@ -374,13 +373,3 @@ class MaFenetreSecondaireDrone(QDialog):
         # Initialisation classique
         self.setLayout(layout)  
         self.show()
- 
-    # def remove_drone(self):
-    # selected_items = self.scene.selectedItems()
- 
-    # for item in selected_items:
-    #     if isinstance(item, items.VehicleItem):
-    #         drone_id = item.drone.ID
-    #         self.model.remove_drone(drone_id)
-    #         self.scene.removeItem(item)
-    #         del self.liste_vehicle_item[drone_id]
