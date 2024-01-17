@@ -33,12 +33,13 @@ class MaFenetrePrincipale(QMainWindow):
         self.building_index=1
  
         self.button_json = QPushButton('créer json')
-        self.gflow_button = QPushButton('lancer gflow')        
+        self.gflow_button = QPushButton('lancer gflow')  
+        
         # Créer un layout principal
         mainlayout = QHBoxLayout()
  
         # Ajouter layout1 à gauche
-        layoutLeft = self.create_layoutLeft()  # Vous devriez implémenter votre propre fonction pour créer layout1
+        layoutLeft = self.create_layoutLeft()  
         mainlayout.addLayout(layoutLeft)
  
         # Ajouter la scène graphique à droite
@@ -49,7 +50,7 @@ class MaFenetrePrincipale(QMainWindow):
         centralWidget.setLayout(mainlayout)
         self.setCentralWidget(centralWidget)
  
-        self.setGeometry(100, 100, 800, 600)  # taille des la fenetre qui s'ouvre
+        self.setGeometry(100, 100, 800, 600)  # taille de la fenetre qui s'ouvre
         self.setWindowTitle('Application avec Barre d\'Outils et Scène Graphique')
         self.model = modele.Modele()
         self.button_json.clicked.connect(self.creer_json)
@@ -76,11 +77,13 @@ class MaFenetrePrincipale(QMainWindow):
  
         # ajouter espace extensible gauche
         h1_layout.addItem(spacer_left)
+        
         # Ajouter le widget au centre (par exemple, un bouton)
         label_triangle = QLabel ('ajouter un drone')
         triangle_widget = buttons.TriangleButton(self)
         h1_layout.addWidget(triangle_widget)
         h1_layout.addWidget(label_triangle)
+        
         # Ajouter un espace extensible droite
         h1_layout.addItem(spacer_right)
  
@@ -88,33 +91,34 @@ class MaFenetrePrincipale(QMainWindow):
  
         # ajouter espace à gauche
         h2_layout.addItem(spacer_left)
+        
         # Ajouter le square à notre layout
         label_square = QLabel ('ajouter un building square')
         square_widget = buttons.SquareButton(self)
         h2_layout.addWidget(square_widget)
         h2_layout.addWidget(label_square)
+        
         # ajouter espace à droite
         h2_layout.addItem(spacer_right)
  
         LayoutLeft.addLayout(h2_layout)
  
-       
- 
-       
         # ajouter espace à gauche
         h3_layout.addItem(spacer_left)
+        
         # Ajouter l'hexagone a notre layout
         label_hexa = QLabel ('ajouter un building hexagonal')
         hexa_widget = buttons.HexagonButton(self)
         h3_layout.addWidget(hexa_widget)
         h3_layout.addWidget(label_hexa)
+        
         # ajouter espace à droite
         h3_layout.addItem(spacer_right)
        
         LayoutLeft.addLayout(h3_layout)
        
  
-        #  # Ajouter des boutons de zoom à votre layout personnalisé
+        # Ajouter des boutons de zoom à votre layout personnalisé
         zoom_in_button = buttons.ZoomButtonP('ZoomButtonP.jpg', 2 , self ,'Zoom In')
         zoom_out_button = buttons.ZoomButtonN('ZoomButtonN.jpg', 0.5, self , 'Zoom Out')
         LayoutLeft.addWidget(zoom_in_button)
@@ -135,14 +139,17 @@ class MaFenetrePrincipale(QMainWindow):
  
         return LayoutLeft
  
-    # pour la partie zoom suite a de nombreux probème avec l'invertion de l'axe y , aide grace à internet pour resoudre le problème
+    #Suite a de nombreux problèmes avec l'invertion de l'axe y, on a eu des problèmes avec le zoom, aide grace à internet pour resoudre le problème
     # https://doc.qt.io/qtforpython-5/PySide2/QtGui/QTransform.html#PySide2.QtGui.PySide2.QtGui.QTransform.m11
+    
     def zoom(self, facteur):
         echelle_actuelle = self.vue.transform().m11() # echelle de la vue actuelle
         nouvelle_echelle = echelle_actuelle * facteur # multiplie par un facteur de zoom
+        
         # permet de conserver l'invertion de l'axe y avec comme point d'ancrage le centre de la volière
         #déplace le centre de la vue vers le centre de la fenêtre.
         # applique la nouvelle échelle avec facteur negatif sur le y pour l'inversion
+        
         self.vue.setTransform(QTransform().translate(self.vue.viewport().width() / 2, self.vue.viewport().height() / 2).scale(nouvelle_echelle, -nouvelle_echelle))
     def zoom_out(self, facteur):
         echelle_actuelle = self.vue.transform().m11()
