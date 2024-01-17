@@ -179,7 +179,9 @@ class MaFenetrePrincipale(QMainWindow):
         self.model.add_drone(drone)
  
         droneItem = items.VehicleItem(drone, self)
+        
         goalItem = items.GoalItem(drone)
+        droneItem.goalItem = goalItem
         self.scene.addItem(droneItem)
         self.scene.addItem(goalItem)
  
@@ -210,7 +212,7 @@ class MaFenetrePrincipale(QMainWindow):
         building = modele.Building("building" + str(self.building_index),vertices)
         self.model.add_building(building)
  
-        buildingItem = items.ObstacleItem(building)
+        buildingItem = items.ObstacleItem(building, self)
         self.scene.addItem(buildingItem)
         self.building_index+=1
  
@@ -257,15 +259,16 @@ class MaFenetreSecondaireGoal(QDialog):
         altitude_slider.valueChanged.connect(lambda val : altitude_display.setText(f"Goal altitude :{val}"))
  
         # # changer la couleur:
-        # self.color_combobox = QComboBox()
-        # self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
-        # self.color_combobox.setCurrentIndex(0)
-        # self.color_combobox.currentIndexChanged.connect(vehicleItem.update_goal_color)
+        self.color_combobox = QComboBox()
+        self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
+        self.color_combobox.setCurrentIndex(0)
+        self.color_combobox.currentIndexChanged.connect(vehicleItem.update_goal_color)
 
         #boutton ok
         ok_button = QPushButton("OK")
         ok_button.clicked.connect(self.accept)
- 
+
+       
        
        # mets en place les layouts
         layout = QVBoxLayout()
@@ -279,6 +282,8 @@ class MaFenetreSecondaireGoal(QDialog):
         # Initialisation classique
         self.setLayout(layout)  
         self.show()
+
+        
 
 class MaFenetreSecondaireBuilding(QDialog):
     def __init__(self, buildingItem, fenetre):
@@ -302,6 +307,8 @@ class MaFenetreSecondaireBuilding(QDialog):
         altitude_slider.valueChanged.connect(lambda val : altitude_display.setText(f"Building altitude :{val}"))
  
 
+
+        
         #boutton ok
         ok_button = QPushButton("OK")
         ok_button.clicked.connect(self.accept)
@@ -346,7 +353,9 @@ class MaFenetreSecondaireDrone(QDialog):
 
         model = fenetre.model
         remove_button.clicked.connect(lambda : model.remove_drone(vehicleItem.drone.ID))
-        #remove_button.clicked.connect(self.remove_drone)
+        remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem))
+        remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem.goalItem))
+        # supprimer la vue graphique de la scene , même chose la scenegaphique.remove (item)
  
        
  
