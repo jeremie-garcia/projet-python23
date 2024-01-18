@@ -40,7 +40,8 @@ class Modele:
         drones_json = [{'ID': Drone.ID, 'position': (np.array(Drone.position)/100).tolist(), 'goal': (np.array(Drone.goal)/100).tolist(), 'orientation' : Drone.orientation, 'source_strength': Drone.source_strength, 'imag_source_strength' : Drone.imag_source_strength, 'sink_strength': Drone.sink_strength, 'safety': Drone.safety} for Drone in self.drones]
         dico={cases_name: {'buildings': buildings_json, 'vehicles': drones_json}} 
         with open('data.json','w') as file:
-            json.dump(dico, file, indent=2) #ouvrir et enregistrer la liste de dictionnaire dans un fichier json
+            json.dump(dico, file, indent=2) #ouvrir et enregistrer la liste de dictionnaire dans un fichier json nommé data.json
+                                            #https://docs.python.org/3/library/json.html : documentation pour fonction json.dump
         
 
 Modele.json(Modele(),'fichierjson')
