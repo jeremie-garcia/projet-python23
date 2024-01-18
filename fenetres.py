@@ -35,6 +35,7 @@ class MaFenetrePrincipale(QMainWindow):
         self.button_json = QPushButton('créer json')
         self.gflow_button = QPushButton('lancer gflow')  
         
+
         # Créer un layout principal
         mainlayout = QHBoxLayout()
  
@@ -66,8 +67,8 @@ class MaFenetrePrincipale(QMainWindow):
     def create_layoutLeft(self):
         LayoutLeft = QVBoxLayout()
  
-        # Ajoutez des widgets à la mise en page
- 
+       
+ # Créer les layouts
         h1_layout = QHBoxLayout()
         h2_layout = QHBoxLayout()
         h3_layout = QHBoxLayout()
@@ -123,19 +124,18 @@ class MaFenetrePrincipale(QMainWindow):
         zoom_out_button = buttons.ZoomButtonN('ZoomButtonN.jpg', 0.5, self , 'Zoom Out')
         LayoutLeft.addWidget(zoom_in_button)
         LayoutLeft.addWidget(zoom_out_button)
- 
+
      
         # boutton json
         LayoutLeft.addWidget(self.button_json)
  
- 
- 
+
         # boutton Jflow
         gflow_button = QPushButton('lacer jflow')
         LayoutLeft.addWidget (self.gflow_button)
        
        
-        self.button_json.clicked.connect(self.creer_json)
+        self.button_json.clicked.connect(self.creer_json) # Exécute la fonction qui créer le fichier json
  
         return LayoutLeft
  
@@ -193,7 +193,7 @@ class MaFenetrePrincipale(QMainWindow):
         #stocker dans le dictionnaire
         self.liste_vehicle_item[drone.ID] = droneItem
  
-        #change le nom pour le prochain drone
+        # Permet que chaque drone est une ID différente
         self.drone_index+=1
 
 
@@ -251,18 +251,18 @@ class MaFenetreSecondaireGoal(QDialog):
  
         # label avec le nom du Goal
         name_label = QLabel(f"Goal ID: {vehicleItem.drone.ID}")
-        # Permet de changer l'ID du Goal
-        self.name_line_edit = QLineEdit(vehicleItem.drone.ID)
+        # On ne permet pas de changer le nom du goal car il change automatiquement avec celui du drone
  
-        # mettre un slider pour l'altitude
+        # Affichage de l'altitude
         altitude_display = QLabel (f"Goal altitude :{vehicleItem.drone.goal[2]}")
+        # Slider pour l'altitude
         altitude_slider = QSlider(Qt.Horizontal)
         altitude_slider.setMinimum(0)
         altitude_slider.setMaximum(800)
         altitude_slider.setValue(vehicleItem.drone.goal[2])
-        altitude_slider.valueChanged.connect(vehicleItem.update_goal_altitude)
-        altitude_slider.valueChanged.connect(lambda val : altitude_display.setText(f"Goal altitude :{val}"))
- 
+        altitude_slider.valueChanged.connect(vehicleItem.update_goal_altitude) # Exécute la fonction qui modifie le modèle
+        altitude_slider.valueChanged.connect(lambda val : altitude_display.setText(f"Goal altitude :{val}")) # Permet de mettre à jour l'affichage
+  
         # # changer la couleur:
         self.color_combobox = QComboBox()
         self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
@@ -271,9 +271,7 @@ class MaFenetreSecondaireGoal(QDialog):
 
         #boutton ok
         ok_button = QPushButton("OK")
-        ok_button.clicked.connect(self.accept)
-
-       
+        ok_button.clicked.connect(self.accept) # méthode accept de la classe Qdialog qui accepte les changements et ferme la fenetre
        
        # mets en place les layouts
         layout = QVBoxLayout()
@@ -283,7 +281,6 @@ class MaFenetreSecondaireGoal(QDialog):
         layout.addWidget(self.color_combobox)
         layout.addWidget(ok_button)
  
-       
         # Initialisation classique
         self.setLayout(layout)  
         self.show()
@@ -297,28 +294,26 @@ class MaFenetreSecondaireBuilding(QDialog):
         self.setWindowTitle("Buildings Details")
         self.setGeometry(100, 100, 300, 150)
  
-        # label avec le nom du Goal
+        # label avec le nom du Building
         name_label = QLabel(f"Building ID: {buildingItem.building.ID}")
-        # Permet de changer l'ID du Goal
-        # self.name_line_edit = QLineEdit(VehicleItem.drone.ID)
+
  
-        # mettre un slider pour l'altitude
+        #Affichage de l'altidude
         altitude_display = QLabel (f"Building altitude :{buildingItem.building.vertices[0][2]}")
+        # Slideer de l'altitude
         altitude_slider = QSlider(Qt.Horizontal)
         altitude_slider.setMinimum(0)
         altitude_slider.setMaximum(800)
         altitude_slider.setValue(int(buildingItem.building.vertices[0][2]))
-        altitude_slider.valueChanged.connect(buildingItem.uptade_building_altitude)
-        altitude_slider.valueChanged.connect(lambda val : altitude_display.setText(f"Building altitude :{val}"))
+        altitude_slider.valueChanged.connect(buildingItem.uptade_building_altitude) #Exécute la fonction qui modifie le modele
+        altitude_slider.valueChanged.connect(lambda val : altitude_display.setText(f"Building altitude :{val}")) # Permet de mettre à jour l'affichage
  
         
         #boutton ok
         ok_button = QPushButton("OK")
-        ok_button.clicked.connect(self.accept)
+        ok_button.clicked.connect(self.accept) # méthode accept de la classe Qdialog qui accepte les changements et ferme la fenetre
 
 
- 
-       
        # mets en place les layouts
         layout = QVBoxLayout()
         layout.addWidget(name_label)
@@ -327,14 +322,12 @@ class MaFenetreSecondaireBuilding(QDialog):
         layout.addWidget(ok_button)
  
        
-        # Initialisation classique
+        # Initialisation classique du layout
         self.setLayout(layout)  
         self.show()
 
-        model = fenetre.model
+        # model = fenetre.model
  
-
-
 
 class MaFenetreSecondaireDrone(QDialog):
     def __init__(self, vehicleItem, fenetre):
@@ -344,6 +337,7 @@ class MaFenetreSecondaireDrone(QDialog):
         self.setGeometry(100, 100, 300, 150)
         # label avec le nom du drone
         name_label = QLabel(f"Drone ID: {vehicleItem.drone.ID}")
+        
         # Permet de changer l'ID du drone
         self.name_line_edit = QLineEdit(vehicleItem.drone.ID)
         self.name_line_edit.textChanged.connect(vehicleItem.update_drone_ID)
@@ -353,23 +347,23 @@ class MaFenetreSecondaireDrone(QDialog):
         self.color_combobox = QComboBox()
         self.color_combobox.addItems(['Cyan', 'Green', 'Blue', 'Yellow', 'Purple','Red'])
         self.color_combobox.setCurrentIndex(0)
-        self.color_combobox.currentIndexChanged.connect(vehicleItem.update_drone_color)
-        # self.color_combobox.currentIndexChanged.connect(VehicleItem.update_goal_color)
+        self.color_combobox.currentIndexChanged.connect(vehicleItem.update_drone_color) # execute la fonction qui change la couleur de l'item drone
+
  
         # Boutton pour enlever le drone:
         remove_button = QPushButton ("retirer le drone")
 
         model = fenetre.model
-        remove_button.clicked.connect(lambda : model.remove_drone(vehicleItem.drone.ID))
-        remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem))
-        remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem.goalItem))
-        # supprimer la vue graphique de la scene , même chose la scenegaphique.remove (item)
+        remove_button.clicked.connect(lambda : model.remove_drone(vehicleItem.drone.ID)) # Exécute la fonction qui retire le drone du modele
+        remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem)) # retire la vue graphique du drone de la scene
+        remove_button.clicked.connect(lambda : fenetre.scene.removeItem(vehicleItem.goalItem)) # retire la vue graphique de la cible de la scene
+  
  
        
  
         #boutton ok
         ok_button = QPushButton("OK")
-        ok_button.clicked.connect(self.accept)
+        ok_button.clicked.connect(self.accept) # méthode accept de la classe Qdialog qui accepte les changements et ferme la fenetre
  
        # mets en place les layouts
         layout = QVBoxLayout()
@@ -379,6 +373,6 @@ class MaFenetreSecondaireDrone(QDialog):
         layout.addWidget(remove_button)
         layout.addWidget(ok_button)
        
-        # Initialisation classique
+        # Initialisation classique du layout
         self.setLayout(layout)  
         self.show()
