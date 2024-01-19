@@ -8,7 +8,7 @@ import fenetres
 import maindrone
  
 
-class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
+class ObstacleItem(QGraphicsPolygonItem):          # définit les items obstacles
     def __init__(self,building, fenetre):
  
         self.fenetre_principale = fenetre
@@ -28,8 +28,8 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
         self.setPen(QPen(Qt.red))
                #l'ajoute au modèle
  
-        
-    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None: #
+        # Cette partie est extraite d'un code préexistant founit par chat gpt et remanié dans notre situation
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None: # | None) -> None: Permet de spécifié explicitement les entrées et sorties acceptées par la fonction
         if event.button() == Qt.RightButton:
          
             self.details_dialog = fenetres.MaFenetreSecondaireBuilding(self, self.fenetre_principale)
@@ -53,11 +53,11 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
         self.newx=event.scenePos().x()        #je recupere la position de la souris
         self.newy=event.scenePos().y()
         self.update_position()
-
+# jusqu'à ici 
  
-    def update_position(self):
+    def update_position(self): # met a jour le modèle
         nbs_sommets=len(self.building.vertices)
-        if nbs_sommets == 4:                            # calcul des coordonées en fonctions du carré ou hexa
+        if nbs_sommets == 4:                            # calcul des coordonées pour le carrée
             self.building.vertices[0][0]= self.newx          
             self.building.vertices[0][1]= self.newy
             self.building.vertices[1][0]= self.newx
@@ -66,24 +66,24 @@ class ObstacleItem(QGraphicsPolygonItem):           #définir les obstacles
             self.building.vertices[2][1]= self.newy +60
             self.building.vertices[3][0]= self.newx + 60
             self.building.vertices[3][1]= self.newy  
+         
         else:
- 
-            for i in range (nbs_sommets):
+            for i in range (nbs_sommets):             #calcul des coordonées pour l'hexagone
                 angle = 2 * math.pi * i / nbs_sommets
                 self.building.vertices[i][0]=self.newx + 60 * math.cos(angle)
                 self.building.vertices[i][1]=self.newy + 60 * math.sin(angle)
            
  
-        self.setPos(QPointF(self.newx, self.newy))                  # deplace le building dans l'interface
+        self.setPos(QPointF(self.newx, self.newy))                  # deplace le building dans l'interfaceb graohique
 
-    def uptade_building_altitude (self, new_alt):
+    def uptade_building_altitude (self, new_alt):               # met à jour l'altitude du building dans le modèle
         nbs_sommets=len(self.building.vertices)
         for i in range (nbs_sommets):
             self.building.vertices[i][2] = new_alt
 
 
 
-class VehicleItem(QGraphicsPolygonItem):
+class VehicleItem(QGraphicsPolygonItem):  # définit les items drones
     def __init__(self,vehicle, fenetre):
  
         self.drone = vehicle
@@ -110,8 +110,8 @@ class VehicleItem(QGraphicsPolygonItem):
         self.fenetre_principale = fenetre
 
 
-
-    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+      # Cette partie est extraite d'un code préexistant founit par chat gpt et remanié dans notre situation
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:  # | None) -> None: Permet de spécifié explicitement les entrées et sorties acceptées par la fonction
         if event.button() == Qt.RightButton:
             self.details_dialog = fenetres.MaFenetreSecondaireDrone(self, self.fenetre_principale)
             self.details_dialog.show()
@@ -129,31 +129,29 @@ class VehicleItem(QGraphicsPolygonItem):
         if event.buttons() & Qt.LeftButton:
             self.handle_left_button_held(event)
            
- 
     def handle_left_button_held(self, event):
         self.newx=event.scenePos().x()                                #je recupere la position de la souris
         self.newy=event.scenePos().y()
         self.update_position()
+     # jusqu'à ici
        
-    def update_position(self):
+    def update_position(self):   
         self.setRotation(self.drone.orientation)
-        self.drone.position[0]=self.newx
+        self.drone.position[0]=self.newx   # met à jour le modèle avec la ligne d'en dessous
         self.drone.position[1]=self.newy
         self.setPos(QPointF(self.newx, self.newy))                  #deplace le drone dans l'interface
         #print(self.drone.target)
  
     def update_drone_color(self):
         color_name = self.details_dialog.color_combobox.currentText()
-        self.setBrush(QBrush(self.color_dict.get(color_name, Qt.cyan)))
-        self.setPen(QPen(self.color_dict.get(color_name, Qt.cyan)))
+        self.setBrush(QBrush(self.color_dict.get(color_name, Qt.cyan)))  # met à jour la couleur de fond
+        self.setPen(QPen(self.color_dict.get(color_name, Qt.cyan)))  # met à jour la couleur du contour
 
-    def update_drone_ID(self, new_text):
+    def update_drone_ID(self, new_text): 
         self.drone.ID = new_text
  
 
-
-
-class GoalItem(QGraphicsPolygonItem):
+class GoalItem(QGraphicsPolygonItem):   # définit les items cible
     def __init__(self,vehicle):
  
         self.drone = vehicle
@@ -189,14 +187,11 @@ class GoalItem(QGraphicsPolygonItem):
        
         self.setRotation(self.drone.orientation)
         self.color_dict =  {'Red': Qt.red, 'Green': Qt.green, 'Blue': Qt.blue, 'Yellow': Qt.yellow, 'Purple': Qt.magenta, 'Cyan':Qt.cyan}
-        self.setBrush(QBrush(Qt.green))
+        self.setBrush(QBrush(Qt.green)) # définie une couleur originel
         self.setPen(QPen(Qt.green))
- 
-    def update_goal_altitude (self, new_alt):
-        self.drone.goal[2] = new_alt
        
-   
-    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None:
+      # Cette partie est extraite d'un code préexistant founit par chat gpt et remanié dans notre situation
+    def mousePressEvent(self, event: QGraphicsSceneMouseEvent | None) -> None: # | None) -> None: Permet de spécifié explicitement les entrées et sorties acceptées par la fonction
         if event.button() == Qt.RightButton:
          
             self.details_dialog = fenetres.MaFenetreSecondaireGoal(self)
@@ -223,13 +218,15 @@ class GoalItem(QGraphicsPolygonItem):
         self.update_position()
  
        
-    def update_position(self):
+    def update_position(self): # met à jour la position dans la scene graphique
         self.setRotation(self.drone.orientation)
  
-        self.setPos(QPointF(self.drone.goal[0], self.drone.goal[1]))                  
+        self.setPos(QPointF(self.drone.goal[0], self.drone.goal[1]))     
 
+    def update_goal_altitude (self, new_alt):
+        self.drone.goal[2] = new_alt
  
     def update_goal_color(self):
         color_name = self.details_dialog.color_combobox.currentText()
-        self.setBrush(QBrush(self.color_dict.get(color_name, Qt.cyan)))
-        self.setPen(QPen(self.color_dict.get(color_name, Qt.cyan)))
+        self.setBrush(QBrush(self.color_dict.get(color_name, Qt.cyan))) # met à jour la couleur de fond
+        self.setPen(QPen(self.color_dict.get(color_name, Qt.cyan)))    # met à jour la couleur du contour
